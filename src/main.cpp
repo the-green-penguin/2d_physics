@@ -49,7 +49,7 @@ int main(int argc, char* argv[]){
 		
 	else{
 		// run program
-		app.run();
+		app.run( parser.program_args() );
 	}
 	
 	return 0;

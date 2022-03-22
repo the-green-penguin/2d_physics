@@ -26,7 +26,7 @@
 CC = g++
 
 # executable
-EXE = ./bin/xxx.exe
+EXE = ./bin/2d_physics.exe
 
 # recursively find all .cpp files and get their '.o' name
 SRC = $(shell find ./src/ -type f -name '*.cpp')

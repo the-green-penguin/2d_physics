@@ -26,12 +26,15 @@ SOFTWARE.
 
 #pragma once
 
+#include <vector>
+#include <string>
+
 
 
 class App{
 public:
   void print_help();
-  void run();
+  void run( std::vector< std::string > file_names );
   
 private:  
   void init();

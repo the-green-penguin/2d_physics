@@ -30,12 +30,27 @@ SOFTWARE.
 
 
 
-void App::print_help(){}
+void App::print_help(){
+  std::cout
+    << "2D Physics v0.1\n"
+    << "Usage: 2d_physics [options] [file]\n"
+    << "\n"
+    << "2D Physics is a simplistic two-dimensional physics simulation. "
+    << "It's main purpose was to act as a learning opportunity for the author. "
+    << "The program is started from the terminal and will then open a second, interactable window with a minimalistic graphical user interface.\n"
+    << "A predefined scene can be loaded from a file.\n"
+    << "\n"
+    << "Options:\n"
+    << "  -h, --help: Displays this message.\n"
+    << "\n";
+}
 
 
 
 //------------------------------------------------------------------------------
-void App::run(){
+void App::run( std::vector< std::string > file_names ){
+  for(auto &f : file_names)
+    std::cout << "File: " << f << "\n";
 }
 
 
