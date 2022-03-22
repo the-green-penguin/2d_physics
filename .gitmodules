@@ -1,3 +1,6 @@
 [submodule "simple_arg_parser"]
 	path = simple_arg_parser
 	url = https://github.com/the-green-penguin/simple_arg_parser.git
+[submodule "simple_2d_graphics"]
+	path = simple_2d_graphics
+	url = https://github.com/the-green-penguin/simple_2d_graphics.git
