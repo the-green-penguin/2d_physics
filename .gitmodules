@@ -1,0 +1,3 @@
+[submodule "simple_arg_parser"]
+	path = simple_arg_parser
+	url = https://github.com/the-green-penguin/simple_arg_parser.git

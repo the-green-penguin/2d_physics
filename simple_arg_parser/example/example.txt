@@ -1,0 +1,73 @@
+You can compile "example.cpp": "g++ example.cpp -o example.run" and experiment
+with its behaviour...
+
+
+
+"./example.run" should produce the following output:
+
+Program: ./example.run
+With arguments: 
+And options...
+
+
+
+"./example.run a b c 12345 test" should produce the following output:
+
+Program: ./example.run
+With arguments: a, b, c, 12345, test,
+And options...
+
+
+
+"./example.run --help" should produce the following output:
+"./example.run -h" as well
+
+Program: ./example.run
+With arguments: 
+And options...
+
+Help needed.
+
+
+
+"./example.run -h 1234" should produce the following output:
+
+Program: ./example.run
+With arguments: 1234,
+And options...
+
+Help needed.
+
+
+
+"./example.run --output=foo" should produce the following output:
+"./example.run -o foo" and
+"./example.run -ofoo" as well.
+
+Program: ./example.run
+With arguments: 
+And options...
+
+Output at: foo,
+
+
+
+"./example.run -o 1 -o2" should produce the following output:
+
+Program: ./example.run
+With arguments:
+And options...
+
+Output at: 1, 2,
+
+
+
+"./example.run -o 1 -o2" should produce the following output:
+
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  Option 'o' expects an argument.
+
+Aborted (core dumped)
+
+
+
