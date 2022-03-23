@@ -24,38 +24,17 @@ SOFTWARE.
 
 */
 
-#include "app.h"
-
-#include <iostream>
-
 #include "file_handler.h"
 
+#include <iostream>
+#include <fstream>
 
 
-void App::print_help(){
-  std::cout
-    << "2D Physics v0.1\n"
-    << "Usage: 2d_physics [options] [file]\n"
-    << "\n"
-    << "2D Physics is a simplistic two-dimensional physics simulation. "
-    << "It's main purpose was to act as a learning opportunity for the author. "
-    << "The program is started from the terminal and will then open a second, interactable window with a minimalistic graphical user interface.\n"
-    << "A predefined scene can be loaded from a file.\n"
-    << "\n"
-    << "Options:\n"
-    << "  -h, --help: Displays this message.\n"
-    << "\n";
+
+void File_Handler::process(const std::string& file_name){
+  load_file_content(file_name);
 }
 
-
-
-//------------------------------------------------------------------------------
-void App::run(const std::vector< std::string >& file_names){
-  File_Handler file_handler;
-  
-  for(auto &f : file_names)
-    file_handler.process(f);
-}
 
 
 
@@ -63,5 +42,26 @@ void App::run(const std::vector< std::string >& file_names){
 // private
 ////////////////////////////////////////////////////////////////////////////////
 
-void App::init(){
+void File_Handler::load_file_content(const std::string& file_name){
+  // open file
+  std::ifstream file;
+  file.exceptions(std::ios::failbit | std::ios::badbit);   // without this, no exception will be thrown when ".open()" fails
+  try{  file.open(file_name);  }
+  catch(std::exception& e){
+    std::cerr << "Error: Unable to open file '" + file_name + "'!\n";
+    return;
+  }
+  
+  // get file content
+  file_content = std::string(
+    (std::istreambuf_iterator<char>(file)),
+    (std::istreambuf_iterator<char>())
+  );
+}
+
+
+
+//------------------------------------------------------------------------------
+void File_Handler::parse(){
+  
 }

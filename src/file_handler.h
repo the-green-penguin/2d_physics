@@ -24,44 +24,19 @@ SOFTWARE.
 
 */
 
-#include "app.h"
+#pragma once
 
-#include <iostream>
-
-#include "file_handler.h"
+#include <string>
 
 
 
-void App::print_help(){
-  std::cout
-    << "2D Physics v0.1\n"
-    << "Usage: 2d_physics [options] [file]\n"
-    << "\n"
-    << "2D Physics is a simplistic two-dimensional physics simulation. "
-    << "It's main purpose was to act as a learning opportunity for the author. "
-    << "The program is started from the terminal and will then open a second, interactable window with a minimalistic graphical user interface.\n"
-    << "A predefined scene can be loaded from a file.\n"
-    << "\n"
-    << "Options:\n"
-    << "  -h, --help: Displays this message.\n"
-    << "\n";
-}
-
-
-
-//------------------------------------------------------------------------------
-void App::run(const std::vector< std::string >& file_names){
-  File_Handler file_handler;
+class File_Handler{
+public:
+  void process(const std::string& file_name);
   
-  for(auto &f : file_names)
-    file_handler.process(f);
-}
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-// private
-////////////////////////////////////////////////////////////////////////////////
-
-void App::init(){
-}
+private:
+  std::string file_content;
+  
+  void load_file_content(const std::string& file_name);
+  void parse();
+};

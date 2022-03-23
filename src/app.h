@@ -34,7 +34,7 @@ SOFTWARE.
 class App{
 public:
   void print_help();
-  void run( std::vector< std::string > file_names );
+  void run(const std::vector< std::string >& file_names);
   
 private:  
   void init();
