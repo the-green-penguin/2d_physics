@@ -27,6 +27,8 @@ SOFTWARE.
 #pragma once
 
 #include <string>
+#include <string>
+#include <fstream>
 
 
 
@@ -36,7 +38,22 @@ public:
   
 private:
   std::string file_content;
+  std::size_t file_pos = 0;
+  std::size_t line = 1;
   
   void load_file_content(const std::string& file_name);
-  void parse();
+  void parse_file();
+    void parse_scene();
+      void parse_scene_name();
+      void parse_background();
+      void parse_time();
+      void parse_objects();
+  char next_char();
+    bool valid_char(char c);
+  std::string next_string();
+  void check_char(char c);
+  void check_string(const std::string& string);
+  bool optional_check_char(char c);
+  bool optional_check_string(const std::string& string);
+  bool file_end();
 };

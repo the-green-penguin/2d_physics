@@ -1,0 +1,17 @@
+{
+  "scene": "Test",
+  "background": [0.0f, 0.0f, 0.0f],
+  "time": 120,
+  
+  "objects":
+    [
+      "triangle":
+        {
+          "position": [0.0f, 0.0f],
+          "rotation": 0.0f,
+          "size": 50.0f,
+          "color": [1.0f, 0.0f, 0.0f],
+          "time": 0
+        }
+    ]
+}

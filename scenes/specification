@@ -1,0 +1,53 @@
+> "Scene" files are specified as a subset of the .json format.
+
+
+
+> Names:
+  - scene: Name of the scene (display in widow bar)
+  - background: Background colour of window 
+  - time: Amount of seconds for the simulation to run
+  - objects: Objects that will be loaded into the scene 
+    -> <name>: Type if Object (triangle, rectangle, circle)
+    -> position: Start position of object 
+    -> rotation: Rotation in degrees 
+    -> size: Size 
+    -> color: Colour of object 
+    -> time: Delay until object is spawned
+
+
+
+> Structure:
+
+{
+  scene: "name",
+  background: [0.0f, 0.0f, 0.0f],
+  time: 0,
+  
+  objects:
+    [
+      triangle:
+        {
+          position: [0.0f, 0.0f],
+          rotation: 0.0f,
+          size: 0.0f,
+          color: [0.0f, 0.0f, 0.0f],
+          time: 0
+        },
+      rectangle:
+        {
+          position: [0.0f, 0.0f],
+          rotation: 0.0f,
+          size: 0.0f,
+          color: [0.0f, 0.0f, 0.0f],
+          time: 0
+        },
+      circle:
+        {
+          position: [0.0f, 0.0f],
+          rotation: 0.0f,
+          size: 0.0f,
+          color: [0.0f, 0.0f, 0.0f],
+          time: 0
+        }
+    ]
+}
