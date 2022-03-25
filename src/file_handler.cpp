@@ -107,7 +107,7 @@ void File_Handler::parse_scene_name(){
 //------------------------------------------------------------------------------
 void File_Handler::parse_background(){
   check_char(':');
-  std::cout << next_string() << "\n";
+  parse_float_array();
   check_char(',');
 }
 
@@ -125,7 +125,19 @@ void File_Handler::parse_time(){
 //------------------------------------------------------------------------------
 void File_Handler::parse_objects(){
   check_char(':');
-  std::cout << next_string() << "\n";
+  parse_float_array();
+}
+
+
+
+//------------------------------------------------------------------------------
+void File_Handler::parse_float_array(){
+  check_char('[');
+  std::cout << next_float() << " a\n";
+  while( ! optional_check_char(']')){
+    check_char(',');
+    std::cout << next_float() << " b\n";
+  }  
 }
 
 
@@ -153,6 +165,17 @@ std::string File_Handler::next_string(){
     string += next_char();
   
   return string;
+}
+
+
+
+//------------------------------------------------------------------------------
+float File_Handler::next_float(){
+  std::string tmp = "";
+  while( ! optional_check_char('f'))
+    tmp += next_char();
+  
+  return std::stof(tmp);
 }
 
 

@@ -48,9 +48,11 @@ private:
       void parse_background();
       void parse_time();
       void parse_objects();
+    void parse_float_array();
   char next_char();
     bool valid_char(char c);
   std::string next_string();
+  float next_float();
   void check_char(char c);
   void check_string(const std::string& string);
   bool optional_check_char(char c);
