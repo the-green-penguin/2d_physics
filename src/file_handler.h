@@ -29,17 +29,21 @@ SOFTWARE.
 #include <string>
 #include <string>
 #include <fstream>
+#include <memory>
+
+#include "scene.h"
 
 
 
 class File_Handler{
 public:
-  void process(const std::string& file_name);
+  void process(const std::string& file_name, std::shared_ptr<Scene> scene);
   
 private:
   std::string file_content;
   std::size_t file_pos = 0;
   std::size_t line = 1;
+  std::shared_ptr<Scene> scene;
   
   void load_file_content(const std::string& file_name);
   void parse_file();
@@ -48,11 +52,12 @@ private:
       void parse_background();
       void parse_time();
       void parse_objects();
-    void parse_float_array();
+    std::vector<float> parse_float_array();
   char next_char();
     bool valid_char(char c);
   std::string next_string();
   float next_float();
+  uint next_uint();
   void check_char(char c);
   void check_string(const std::string& string);
   bool optional_check_char(char c);

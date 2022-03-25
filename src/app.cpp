@@ -28,8 +28,6 @@ SOFTWARE.
 
 #include <iostream>
 
-#include "file_handler.h"
-
 
 
 void App::print_help(){
@@ -50,11 +48,11 @@ void App::print_help(){
 
 
 //------------------------------------------------------------------------------
-void App::run(const std::vector< std::string >& file_names){
-  File_Handler file_handler;
-  
-  for(auto &f : file_names)
-    file_handler.process(f);
+void App::run(const std::vector< std::string >& file_names){  
+  for(auto &f : file_names){
+    scenes.push_back( std::make_shared<Scene>() );
+    file_handler.process(f, scenes.back());
+  }
 }
 
 

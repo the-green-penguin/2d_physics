@@ -54,6 +54,8 @@ private:
 //------------------------------------------------------------------------------
 class Scene{
 public:
+  Scene();
+  ~Scene();
   void set_name(const std::string& name);
   void set_background_colour(glm::vec3 colour);
   void set_time(uint time);
@@ -61,9 +63,14 @@ public:
   void start();
   
 private:
+  bool name_ready = false;
+  bool background_ready = false;
+  bool time_ready = false;
   std::string name;
   glm::vec3 background_colour;
   uint time;
   std::vector<PhyObject> phy_objects;
-  Window window;
+  std::shared_ptr<Window> window;
+  
+  void run();
 };

@@ -27,20 +27,40 @@ SOFTWARE.
 #include "scene.h"
 
 #include <iostream>
+#include <exception>
 
 
 
-void Scene::set_name(const std::string& name){  this->name = name;  }
-
-
-
-//------------------------------------------------------------------------------
-void Scene::set_background_colour(glm::vec3 colour){  this->background_colour = colour;  }
+Scene::Scene(){}
 
 
 
 //------------------------------------------------------------------------------
-void Scene::set_time(uint time){  this->time = time;  }
+Scene::~Scene(){}
+
+
+
+//------------------------------------------------------------------------------
+void Scene::set_name(const std::string& name){
+  this->name = name;
+  name_ready = true;
+}
+
+
+
+//------------------------------------------------------------------------------
+void Scene::set_background_colour(glm::vec3 colour){
+  this->background_colour = colour;
+  background_ready = true;
+}
+
+
+
+//------------------------------------------------------------------------------
+void Scene::set_time(uint time){
+  this->time = time;
+  time_ready = true;
+}
 
 
 
@@ -51,6 +71,11 @@ void Scene::add_object(PhyObject object){  this->phy_objects.push_back(object); 
 
 //------------------------------------------------------------------------------
 void Scene::start(){
+  if(name_ready && background_ready && time_ready)
+    run();
+    
+  else
+    throw std::runtime_error("Scene has not been initialized properly.");
 }
 
 
@@ -58,3 +83,7 @@ void Scene::start(){
 ////////////////////////////////////////////////////////////////////////////////
 // private
 ////////////////////////////////////////////////////////////////////////////////
+
+void Scene::run(){
+  window = std::make_shared<Window>(name);
+}

@@ -29,18 +29,18 @@ CC = g++
 EXE = ./bin/2d_physics.exe
 
 # recursively find all .cpp files and get their '.o' name
-SRC = $(shell find ./src/ -type f -name '*.cpp')
+SRC = $(shell find ./src/ -not -path '*/test/*' -type f -name '*.cpp')
 OBJ = $(patsubst %.cpp, %.o, $(SRC) )
 
 # flags
-CPP_V = -std=c++17
-DEBUG_FLAGS = -g -Wall -Wextra -pedantic -fPIC -O0
-RELEASE_FLAGS = -fPIC -O3
+CPP_V = -std=c++2a
+DEBUG_FLAGS = -g -Wall -Wextra -pedantic -fPIC -pthread -O0
+RELEASE_FLAGS = -fPIC -pthread -O3
 CFLAGS = $(DEBUG_FLAGS)
 
 # includes & libraries
 INC = 
-LIB =
+LIB =  -lGL -lglfw -lGLEW
 
 # all flags
 FLAGS = $(INC) $(LIB) $(CFLAGS) $(CPP_V)

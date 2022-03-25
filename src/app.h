@@ -28,6 +28,10 @@ SOFTWARE.
 
 #include <vector>
 #include <string>
+#include <memory>
+
+#include "file_handler.h"
+#include "scene.h"
 
 
 
@@ -36,7 +40,9 @@ public:
   void print_help();
   void run(const std::vector< std::string >& file_names);
   
-private:  
-  void init();
+private:
+  File_Handler file_handler;
+  std::vector< std::shared_ptr< Scene > > scenes;
   
+  void init();
 };

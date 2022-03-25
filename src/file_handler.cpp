@@ -31,7 +31,8 @@ SOFTWARE.
 
 
 
-void File_Handler::process(const std::string& file_name){
+void File_Handler::process(const std::string& file_name, std::shared_ptr<Scene> scene){
+  this->scene = scene;
   load_file_content(file_name);
 }
 
@@ -98,7 +99,7 @@ void File_Handler::parse_scene(){
 //------------------------------------------------------------------------------
 void File_Handler::parse_scene_name(){
   check_char(':');
-  std::cout << next_string() << "\n";
+  scene->set_name( next_string() );
   check_char(',');
 }
 
@@ -107,7 +108,13 @@ void File_Handler::parse_scene_name(){
 //------------------------------------------------------------------------------
 void File_Handler::parse_background(){
   check_char(':');
-  parse_float_array();
+  
+  std::vector<float> colour = parse_float_array();
+  if(colour.size() != 3)
+    throw std::runtime_error("Invalid value for scene background colour.");
+  
+  scene->set_background_colour( glm::vec3(colour[0],colour[1], colour[2]) );
+  
   check_char(',');
 }
 
@@ -116,7 +123,7 @@ void File_Handler::parse_background(){
 //------------------------------------------------------------------------------
 void File_Handler::parse_time(){
   check_char(':');
-  std::cout << next_string() << "\n";
+  scene->set_time( next_uint() );
   check_char(',');
 }
 
@@ -131,13 +138,17 @@ void File_Handler::parse_objects(){
 
 
 //------------------------------------------------------------------------------
-void File_Handler::parse_float_array(){
+std::vector<float> File_Handler::parse_float_array(){
   check_char('[');
-  std::cout << next_float() << " a\n";
+  std::vector<float> tmp;
+  
+  tmp.push_back( next_float() );
   while( ! optional_check_char(']')){
     check_char(',');
-    std::cout << next_float() << " b\n";
-  }  
+    tmp.push_back( next_float() );
+  }
+  
+  return tmp;
 }
 
 
@@ -173,6 +184,17 @@ std::string File_Handler::next_string(){
 float File_Handler::next_float(){
   std::string tmp = "";
   while( ! optional_check_char('f'))
+    tmp += next_char();
+  
+  return std::stof(tmp);
+}
+
+
+
+//------------------------------------------------------------------------------
+uint File_Handler::next_uint(){
+  std::string tmp = "";
+  while( ! optional_check_char(',') && ! optional_check_char('}') && ! optional_check_char(']'))
     tmp += next_char();
   
   return std::stof(tmp);
