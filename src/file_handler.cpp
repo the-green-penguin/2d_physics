@@ -130,7 +130,7 @@ void File_Handler::parse_time(){
 
 
 //------------------------------------------------------------------------------
-void File_Handler::parse_objects(){
+void File_Handler::parse_objects(){   std::cout << "obj\n";
   check_char(':');
   parse_float_array();
 }
@@ -140,15 +140,15 @@ void File_Handler::parse_objects(){
 //------------------------------------------------------------------------------
 std::vector<float> File_Handler::parse_float_array(){
   check_char('[');
-  std::vector<float> tmp;
+  std::vector<float> ret;
   
-  tmp.push_back( next_float() );
-  while( ! optional_check_char(']')){
+  ret.push_back( next_float() );
+  while( ! optional_check_char(']') && ! file_end()){
     check_char(',');
-    tmp.push_back( next_float() );
+    ret.push_back( next_float() );
   }
   
-  return tmp;
+  return ret;
 }
 
 
@@ -172,7 +172,7 @@ std::string File_Handler::next_string(){
   check_char('"');
   
   std::string string = "";
-  while( ! optional_check_char('"'))
+  while( ! optional_check_char('"') && ! file_end())
     string += next_char();
   
   return string;
@@ -182,22 +182,45 @@ std::string File_Handler::next_string(){
 
 //------------------------------------------------------------------------------
 float File_Handler::next_float(){
+  // get substring
   std::string tmp = "";
-  while( ! optional_check_char('f'))
+  float ret = 0.0f;
+  while( ! optional_check_char('f') && tmp.size() < 20 && ! file_end())
     tmp += next_char();
   
-  return std::stof(tmp);
+  // handle invalid input
+  try{  ret = std::stof(tmp);  }
+  catch(std::exception& e){
+    std::stringstream message;
+    message << "Invalid file format! Expected <float> but found '" << tmp << "' in line " << line << ".";
+    throw std::runtime_error(message.str());
+  }
+  
+  // result
+  return ret;
 }
 
 
 
 //------------------------------------------------------------------------------
 uint File_Handler::next_uint(){
+  // get substring
   std::string tmp = "";
-  while( ! optional_check_char(',') && ! optional_check_char('}') && ! optional_check_char(']'))
+  uint ret = 0;
+  while( ! optional_check_char(',') && ! optional_check_char('}') && ! optional_check_char(']') && tmp.size() < 20 && ! file_end())
     tmp += next_char();
   
-  return std::stof(tmp);
+  // handle invalid input
+  try{  ret = std::stoul(tmp);  }
+  catch(std::exception& e){
+    std::stringstream message;
+    message << "Invalid file format! Expected <uint> but found '" << tmp << "' in line " << line << ".";
+    throw std::runtime_error(message.str());
+  }
+  
+  // result
+  file_pos--;   // revert from optional_check
+  return ret;
 }
 
 
