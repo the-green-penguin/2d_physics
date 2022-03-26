@@ -12,6 +12,15 @@
           "size": 50.0f,
           "color": [1.0f, 0.0f, 0.0f],
           "time": 0
+        },
+        
+      "rectangle":
+        {
+          "position": [70.0f, 10.0f],
+          "rotation": 30.0f,
+          "size": 50.0f,
+          "color": [0.0f, 1.0f, 0.0f],
+          "time": 10
         }
     ]
 }

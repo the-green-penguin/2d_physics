@@ -68,6 +68,7 @@ private:
     std::vector<float> parse_float_array();
   char next_char();
     bool valid_char(char c);
+  char next_num();
   std::string next_string();
   float next_float();
   uint next_uint();

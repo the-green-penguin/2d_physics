@@ -136,6 +136,9 @@ void File_Handler::parse_object_array(){
   check_char(':');
   check_char('[');
 
+  if(optional_check_char(']'))
+    return;   // empty array
+  
   parse_object();
   
   while( ! optional_check_char(']') && ! file_end()){
@@ -296,6 +299,21 @@ char File_Handler::next_char(){
 
 
 //------------------------------------------------------------------------------
+char File_Handler::next_num(){
+  char c = next_char();
+  
+  if( ! isdigit(c) && c != '.' ){
+    std::stringstream message;
+    message << "Invalid file format! Expected <number> but found '" << c << "' in line " << line << ".";
+    throw std::runtime_error(message.str());
+  }
+  
+  return c;
+}
+
+
+
+//------------------------------------------------------------------------------
 std::string File_Handler::next_string(){
   check_char('"');
   
@@ -314,7 +332,7 @@ float File_Handler::next_float(){
   std::string tmp = "";
   float ret = 0.0f;
   while( ! optional_check_char('f') && tmp.size() < 20 && ! file_end())
-    tmp += next_char();
+    tmp += next_num();
   
   // handle invalid input
   try{  ret = std::stof(tmp);  }
@@ -335,8 +353,8 @@ uint File_Handler::next_uint(){
   // get substring
   std::string tmp = "";
   uint ret = 0;
-  while( ! optional_check_char(',') && ! optional_check_char('}') && ! optional_check_char(']') && tmp.size() < 20 && ! file_end())
-    tmp += next_char();
+  while( ! optional_check_char(',') && ! optional_check_char('}') && ! optional_check_char(']') && ! optional_check_char('.') && tmp.size() < 20 && ! file_end())
+    tmp += next_num();
   
   // handle invalid input
   try{  ret = std::stoul(tmp);  }
