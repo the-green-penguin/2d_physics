@@ -29,7 +29,7 @@ CC = g++
 EXE = ./bin/2d_physics.exe
 
 # recursively find all .cpp files and get their '.o' name
-SRC = $(shell find ./src/ -not -path '*/test/*' -type f -name '*.cpp')
+SRC = $(shell find ./src/ -type f -name '*.cpp')
 OBJ = $(patsubst %.cpp, %.o, $(SRC) )
 
 # flags
@@ -40,7 +40,9 @@ CFLAGS = $(DEBUG_FLAGS)
 
 # includes & libraries
 INC = 
-LIB =  -lGL -lglfw -lGLEW
+STA_LIB = -Lsimple_2d_graphics/bin/ -Wl,-Bstatic -lsimple_2d 
+DYN_LIB = -Wl,-Bdynamic -lGL -lglfw -lGLEW
+LIB = $(STA_LIB) $(DYN_LIB)
 
 # all flags
 FLAGS = $(INC) $(LIB) $(CFLAGS) $(CPP_V)
@@ -49,7 +51,7 @@ FLAGS = $(INC) $(LIB) $(CFLAGS) $(CPP_V)
 
 # actual compilation
 # " $@ : $< "
-all: $(EXE)
+all: sub-make $(EXE)
 
 # link object files -> executable
 $(EXE): $(OBJ)
@@ -62,7 +64,7 @@ $(EXE): $(OBJ)
 
 
 # input arguments for 'make'
-.PHONY: new clean release
+.PHONY: new clean release sub-make
 
 new: clean all
 
@@ -71,3 +73,6 @@ clean:
 
 release: CFLAGS = $(RELEASE_FLAGS)
 release: clean all
+
+sub-make:
+	$(MAKE) -C simple_2d_graphics MAKEFLAGS=
