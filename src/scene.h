@@ -39,6 +39,14 @@ SOFTWARE.
 
 class PhyObject{
 public:
+  PhyObject(
+    glm::vec2 position,
+    float rotation,
+    float size,
+    glm::vec3 colour,
+    uint time
+  );
+  ~PhyObject();
   
 private:
   glm::vec2 position;

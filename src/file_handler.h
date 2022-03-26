@@ -40,6 +40,12 @@ public:
   void process(const std::string& file_name, std::shared_ptr<Scene> scene);
   
 private:
+  enum phy_obj_type{
+    triangle,
+    rectangle,
+    circle
+  };
+  
   std::string file_content;
   std::size_t file_pos = 0;
   std::size_t line = 1;
@@ -51,7 +57,14 @@ private:
       void parse_scene_name();
       void parse_background();
       void parse_time();
-      void parse_objects();
+      void parse_object_array();
+        void parse_object();
+          phy_obj_type parse_object_type();
+          glm::vec2 parse_object_position();
+          float parse_object_rotation();
+          float parse_object_size();
+          glm::vec3 parse_object_colour();
+          uint parse_object_time();
     std::vector<float> parse_float_array();
   char next_char();
     bool valid_char(char c);

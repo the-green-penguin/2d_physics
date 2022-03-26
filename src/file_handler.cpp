@@ -71,6 +71,8 @@ void File_Handler::load_file_content(const std::string& file_name){
 
 //------------------------------------------------------------------------------
 void File_Handler::parse_file(){
+  file_content += ".";
+  
   check_char('{');  
   parse_scene();
   check_char('}');
@@ -91,7 +93,7 @@ void File_Handler::parse_scene(){
   parse_time();
     
   check_string("objects");
-  parse_objects();
+  parse_object_array();
 }
 
 
@@ -113,7 +115,7 @@ void File_Handler::parse_background(){
   if(colour.size() != 3)
     throw std::runtime_error("Invalid value for scene background colour.");
   
-  scene->set_background_colour( glm::vec3(colour[0],colour[1], colour[2]) );
+  scene->set_background_colour( glm::vec3(colour[0], colour[1], colour[2]) );
   
   check_char(',');
 }
@@ -130,9 +132,129 @@ void File_Handler::parse_time(){
 
 
 //------------------------------------------------------------------------------
-void File_Handler::parse_objects(){   std::cout << "obj\n";
+void File_Handler::parse_object_array(){
   check_char(':');
-  parse_float_array();
+  check_char('[');
+
+  parse_object();
+  
+  while( ! optional_check_char(']') && ! file_end()){
+    check_char(',');
+    parse_object();
+  }
+}
+
+
+
+//------------------------------------------------------------------------------
+void File_Handler::parse_object(){
+  parse_object_type();
+  
+  check_char(':');
+  check_char('{');
+  
+  check_string("position");
+  glm::vec2 pos = parse_object_position();
+    
+  check_string("rotation");
+  float rot = parse_object_rotation();
+    
+  check_string("size");
+  float size = parse_object_size();
+    
+  check_string("color");
+  glm::vec3 colour = parse_object_colour();
+  
+  check_string("time");
+  uint time = parse_object_time();
+  
+  check_char('}');
+  
+  scene->add_object(
+    PhyObject(pos, rot, size, colour, time)
+  );
+}
+
+
+
+//------------------------------------------------------------------------------
+File_Handler::phy_obj_type File_Handler::parse_object_type(){
+  if( optional_check_string("triangle") )
+    return triangle;
+  if( optional_check_string("rectangle") )
+    return rectangle;
+  if( optional_check_string("circle") )
+    return circle;
+    
+  else{
+    std::stringstream message;
+    message << "Invalid file format! Expected 'triangle', 'rectangle' or 'circle' in line " << line << ".";
+    throw std::runtime_error(message.str());
+  }
+}
+
+
+
+//------------------------------------------------------------------------------
+glm::vec2 File_Handler::parse_object_position(){
+  check_char(':');
+  
+  std::vector<float> colour = parse_float_array();
+  if(colour.size() != 2){
+    std::stringstream message;
+    message << "Invalid file format! Expected <[float, float]> after '\"position\":' in line " << line << ".";
+    throw std::runtime_error(message.str());
+  }
+
+  check_char(',');
+  return glm::vec2(colour[0], colour[1]);
+}
+
+
+
+//------------------------------------------------------------------------------
+float File_Handler::parse_object_rotation(){
+  check_char(':');
+  float ret = next_float();
+  check_char(',');
+  
+  return ret;
+}
+
+
+
+//------------------------------------------------------------------------------
+float File_Handler::parse_object_size(){
+  check_char(':');
+  float ret = next_float();
+  check_char(',');
+  
+  return ret;
+}
+
+
+
+//------------------------------------------------------------------------------
+glm::vec3 File_Handler::parse_object_colour(){
+  check_char(':');
+  
+  std::vector<float> colour = parse_float_array();
+  if(colour.size() != 3){
+    std::stringstream message;
+    message << "Invalid file format! Expected <[float, float, float]> after '\"color\":' in line " << line << ".";
+    throw std::runtime_error(message.str());
+  }
+
+  check_char(',');
+  return glm::vec3(colour[0], colour[1], colour[2]);
+}
+
+
+
+//------------------------------------------------------------------------------
+uint File_Handler::parse_object_time(){
+  check_char(':');
+  return next_uint();
 }
 
 
@@ -155,13 +277,19 @@ std::vector<float> File_Handler::parse_float_array(){
 
 //------------------------------------------------------------------------------
 char File_Handler::next_char(){
-  char next = file_content.at(file_pos++);
+  // end of file
+  file_pos++;
+  if( file_end() )
+    return file_content.at( (file_pos--) - 1 );
+  
+  // get next valid char
+  char next = file_content.at(file_pos - 1);
   if(next == '\n')   // this should be 'translated' to be platform independend (?)
     line++;
     
-  if( ! valid_char(next) && ! file_end())
+  if( ! valid_char(next))
     return next_char();
-    
+        
   return next;
 }
 
@@ -297,7 +425,7 @@ bool File_Handler::optional_check_string(const std::string& string){
 
 //------------------------------------------------------------------------------
 bool File_Handler::file_end(){
-  if(file_pos == file_content.size() - 1)
+  if(file_pos >= file_content.size())
     return true;
     
   return false;
