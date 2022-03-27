@@ -40,12 +40,6 @@ public:
   void process(const std::string& file_name, std::shared_ptr<Scene> scene);
   
 private:
-  enum phy_obj_type{
-    triangle,
-    rectangle,
-    circle
-  };
-  
   std::string file_content;
   std::size_t file_pos = 0;
   std::size_t line = 1;

@@ -151,7 +151,7 @@ void File_Handler::parse_object_array(){
 
 //------------------------------------------------------------------------------
 void File_Handler::parse_object(){
-  parse_object_type();
+  phy_obj_type type = parse_object_type();
   
   check_char(':');
   check_char('{');
@@ -174,14 +174,14 @@ void File_Handler::parse_object(){
   check_char('}');
   
   scene->add_object(
-    PhyObject(pos, rot, size, colour, time)
+    std::make_shared<PhyObject>(pos, rot, size, colour, time, type)
   );
 }
 
 
 
 //------------------------------------------------------------------------------
-File_Handler::phy_obj_type File_Handler::parse_object_type(){
+phy_obj_type File_Handler::parse_object_type(){
   if( optional_check_string("triangle") )
     return triangle;
   if( optional_check_string("rectangle") )

@@ -37,24 +37,36 @@ SOFTWARE.
 
 
 
+enum phy_obj_type{
+  triangle,
+  rectangle,
+  circle
+};
+
+
+
 class PhyObject{
 public:
+  phy_obj_type type;
+  glm::vec2 position;
+  float rotation;
+  float size;
+  glm::vec3 colour;
+  
   PhyObject(
     glm::vec2 position,
     float rotation,
     float size,
     glm::vec3 colour,
-    uint time
+    uint time,
+    phy_obj_type type
   );
   ~PhyObject();
+  void set_gobj_id(id id);
   
 private:
-  glm::vec2 position;
-  float rotation;
-  float size;
-  glm::vec3 colour;
   uint time;
-  std::shared_ptr<GShape> graphics_object;
+  id g_obj_id;
 };
 
 
@@ -67,7 +79,8 @@ public:
   void set_name(const std::string& name);
   void set_background_colour(glm::vec3 colour);
   void set_time(uint time);
-  void add_object(PhyObject object);
+  void add_object(std::shared_ptr<PhyObject> object);
+  bool is_ready();
   void start();
   
 private:
@@ -77,7 +90,7 @@ private:
   std::string name;
   glm::vec3 background_colour;
   uint time;
-  std::vector<PhyObject> phy_objects;
+  std::vector< std::shared_ptr<PhyObject> > phy_objects;
   std::shared_ptr<Window> window;
   
   void run();
