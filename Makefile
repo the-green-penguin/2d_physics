@@ -51,7 +51,11 @@ FLAGS = $(INC) $(LIB) $(CFLAGS) $(CPP_V)
 
 # actual compilation
 # " $@ : $< "
-all: sub-make $(EXE)
+all: rm-exe sub-make $(EXE)
+	
+# remove old .exe
+rm-exe:
+	rm -f ./bin/*.exe
 
 # link object files -> executable
 $(EXE): $(OBJ)
