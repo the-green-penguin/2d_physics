@@ -52,6 +52,10 @@ void App::run(const std::vector< std::string >& file_names){
   for(auto &f : file_names){
     scenes.push_back( std::make_shared<Scene>() );
     file_handler.process(f, scenes.back());
+    
+    // Test
+    scenes.back()->start();
+    std::cout << "Done.\n";
   }
 }
 

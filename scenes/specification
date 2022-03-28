@@ -1,18 +1,19 @@
 > "Scene" files are specified as a subset of the .json format.
+> Tick: 10ms
 
 
 
 > Names:
   - scene: Name of the scene (display in widow bar)
   - background: Background colour of window 
-  - time: Amount of seconds for the simulation to run
+  - time: Amount of ticks for the simulation to run
   - objects: Objects that will be loaded into the scene 
     -> <name>: Type if Object (triangle, rectangle, circle)
     -> position: Start position of object 
     -> rotation: Rotation in degrees 
     -> size: Size 
     -> color: Colour of object 
-    -> time: Delay until object is spawned
+    -> time: Delay (ticks) until object is spawned
 
 
 

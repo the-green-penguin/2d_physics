@@ -62,11 +62,16 @@ public:
     phy_obj_type type
   );
   ~PhyObject();
-  void set_gobj_id(id id);
+  void set_id(id obj_id);
+  id get_id();
+  uint get_time();
+  bool is_active();
+  void activate();
   
 private:
+  id obj_id;
   uint time;
-  id g_obj_id;
+  bool activated = false;
 };
 
 
@@ -90,8 +95,15 @@ private:
   std::string name;
   glm::vec3 background_colour;
   uint time;
+  std::vector< std::shared_ptr<PhyObject> > phy_objects_wait;
   std::vector< std::shared_ptr<PhyObject> > phy_objects;
   std::shared_ptr<Window> window;
+  uint ticks_passed = 0;
   
   void run();
+  void loop_timer();
+    uint current_time();
+    void loop_tick();
+  void check_activate_objects();
+  void activate_object(std::shared_ptr<PhyObject> object);
 };
