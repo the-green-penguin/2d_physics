@@ -150,9 +150,10 @@ bool Scene::is_ready(){
 
 //------------------------------------------------------------------------------
 void Scene::run(){
-  window = std::make_shared<Window>(name);
+  window = std::make_unique<Window>(name);
   window->wait_for_setup();
   loop_timer();
+  std::cout << "Done.\n";
 }
 
 

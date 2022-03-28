@@ -41,8 +41,8 @@ public:
   
 private:
   std::string file_content;
-  std::size_t file_pos = 0;
-  std::size_t line = 1;
+  std::size_t file_pos;
+  std::size_t line;
   std::shared_ptr<Scene> scene;
   
   void load_file_content(const std::string& file_name);

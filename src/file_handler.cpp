@@ -33,6 +33,8 @@ SOFTWARE.
 
 void File_Handler::process(const std::string& file_name, std::shared_ptr<Scene> scene){
   this->scene = scene;
+  file_pos = 0;
+  line = 1;
   load_file_content(file_name);
 }
 

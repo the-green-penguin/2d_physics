@@ -97,7 +97,7 @@ private:
   uint time;
   std::vector< std::shared_ptr<PhyObject> > phy_objects_wait;
   std::vector< std::shared_ptr<PhyObject> > phy_objects;
-  std::shared_ptr<Window> window;
+  std::unique_ptr<Window> window;
   uint ticks_passed = 0;
   
   void run();

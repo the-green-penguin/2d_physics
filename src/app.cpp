@@ -49,14 +49,8 @@ void App::print_help(){
 
 //------------------------------------------------------------------------------
 void App::run(const std::vector< std::string >& file_names){  
-  for(auto &f : file_names){
-    scenes.push_back( std::make_shared<Scene>() );
-    file_handler.process(f, scenes.back());
-    
-    // Test
-    scenes.back()->start();
-    std::cout << "Done.\n";
-  }
+  init(file_names);
+  execute();
 }
 
 
@@ -65,5 +59,22 @@ void App::run(const std::vector< std::string >& file_names){
 // private
 ////////////////////////////////////////////////////////////////////////////////
 
-void App::init(){
+void App::init(const std::vector< std::string >& file_names){
+  // load scenes from files
+  for(auto &f : file_names){
+    scenes.push( std::make_shared<Scene>() );
+    file_handler.process(f, scenes.back());
+  }
+}
+
+
+
+//------------------------------------------------------------------------------
+void App::execute(){
+  // run simulation scenes consecutively
+  while( ! scenes.empty()){
+    scenes.front()->start();
+    std::cout << "Close window of simulation to continue.\n";
+    scenes.pop();
+  }
 }
