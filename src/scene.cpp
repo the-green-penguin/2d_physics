@@ -166,7 +166,7 @@ void Scene::loop_timer(){
   uint time_diff = 0;
   
   // wait for tick
-  while(ticks_passed < time){
+  while(ticks_passed < time && ! window->got_closed()){
     // time since last check
     time_diff += current_time() - time_prev;
     
