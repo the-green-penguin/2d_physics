@@ -33,12 +33,13 @@ SOFTWARE.
 void App::print_help(){
   std::cout
     << "2D Physics v0.1\n"
-    << "Usage: 2d_physics [options] [file]\n"
+    << "Usage: 2d_physics [options] [files]\n"
     << "\n"
     << "2D Physics is a simplistic two-dimensional physics simulation. "
     << "It's main purpose was to act as a learning opportunity for the author. "
     << "The program is started from the terminal and will then open a second, interactable window with a minimalistic graphical user interface.\n"
-    << "A predefined scene can be loaded from a file.\n"
+    << "Predefined scenes are loaded from files and will be executed consecutively.\n"
+    << "Close the window of a scene to start the next scene.\n"
     << "\n"
     << "Options:\n"
     << "  -h, --help: Displays this message.\n"
@@ -74,7 +75,6 @@ void App::execute(){
   // run simulation scenes consecutively
   while( ! scenes.empty()){
     scenes.front()->start();
-    std::cout << "Close window of simulation to continue.\n";
     scenes.pop();
   }
 }

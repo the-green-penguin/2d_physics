@@ -49,7 +49,10 @@ int main(int argc, char* argv[]){
 		
 	else{
 		// run program
-		app.run( parser.program_args() );
+		try{  app.run(parser.program_args());  }
+		catch(std::exception& e){
+			std::cerr << "Error: " << e.what() << "\n";
+		}
 	}
 	
 	return 0;
