@@ -1,0 +1,9 @@
+{
+  "scene": "Test",
+  "background": [0.0f, 0.25f, 0.75f],
+  "time": 100,
+  
+  "objects":
+    [
+    ]
+}

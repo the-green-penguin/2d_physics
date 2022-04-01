@@ -152,6 +152,8 @@ bool Scene::is_ready(){
 void Scene::run(){
   window = std::make_unique<Window>(name);
   window->wait_for_setup();
+  window->set_background_colour(background_colour);
+  
   loop_timer();
   std::cout << "Done.\n";
 }
