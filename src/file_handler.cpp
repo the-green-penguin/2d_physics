@@ -175,9 +175,7 @@ void File_Handler::parse_object(){
   
   check_char('}');
   
-  scene->add_object(
-    std::make_shared<PhyObject>(pos, rot, size, colour, time, type)
-  );
+  scene->add_object(pos, rot, size, colour, time, type);
 }
 
 

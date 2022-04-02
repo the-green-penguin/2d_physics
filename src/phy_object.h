@@ -33,52 +33,91 @@ SOFTWARE.
 #include <glm/glm.hpp>   // sudo apt install libglm-dev
 
 #include "../simple_2d_graphics/src/window.h"
-#include "phy_object.h"
+#include "../simple_2d_graphics/src/graphics_object.h"
 
 
 
-enum phy_obj_type{
-  triangle,
-  rectangle,
-  circle
+class PhyObject{
+public:
+  glm::vec2 position;
+  float rotation;
+  float size;
+  glm::vec3 colour;
+  
+  PhyObject(
+    glm::vec2 position,
+    float rotation,
+    float size,
+    glm::vec3 colour,
+    uint time
+  );
+  ~PhyObject();
+  uint get_time();
+  bool is_active();
+  virtual void activate() = 0;
+  
+protected:
+  id gobj_id;
+  uint time;
+  bool activated = false;
 };
 
 
 
-class Scene{
+//------------------------------------------------------------------------------
+class PhyTriangle : public PhyObject{
 public:
-  Scene();
-  ~Scene();
-  void set_name(const std::string& name);
-  void set_background_colour(glm::vec3 colour);
-  void set_time(uint time);
-  void add_object(
+  PhyTriangle(
     glm::vec2 position,
     float rotation,
     float size,
     glm::vec3 colour,
     uint time,
-    phy_obj_type type
+    std::shared_ptr<Window> window
   );
-  bool is_ready();
-  void start();
+  ~PhyTriangle();
+  void activate();
   
-private:
-  bool name_ready = false;
-  bool background_ready = false;
-  bool time_ready = false;
-  std::string name;
-  glm::vec3 background_colour;
-  uint time;
-  std::vector< std::shared_ptr<PhyObject> > phy_objects_wait;
-  std::vector< std::shared_ptr<PhyObject> > phy_objects;
+protected:
   std::shared_ptr<Window> window;
-  uint ticks_passed = 0;
+};
+
+
+
+//------------------------------------------------------------------------------
+class PhyRect : public PhyObject{
+public:
+  PhyRect(
+    glm::vec2 position,
+    float rotation,
+    float size,
+    glm::vec3 colour,
+    uint time,
+    std::shared_ptr<Window> window
+  );
+  ~PhyRect();
+  void activate();
   
-  void run();
-  void loop_timer();
-    uint current_time();
-    void loop_tick();
-  void check_activate_objects();
-  void activate_object(std::shared_ptr<PhyObject> object);
+protected:
+  std::shared_ptr<Window> window;
+};
+
+
+
+//------------------------------------------------------------------------------
+class PhyCircle : public PhyObject{
+public:
+  PhyCircle(
+    glm::vec2 position,
+    float rotation,
+    float size,
+    glm::vec3 colour,
+    uint time,
+    std::shared_ptr<Window> window
+  );
+  ~PhyCircle();
+  void activate();
+  
+protected:
+  std::shared_ptr<Window> window;
 };

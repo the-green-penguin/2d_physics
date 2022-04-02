@@ -32,61 +32,6 @@ SOFTWARE.
 
 
 
-////////////////////////////////////////////////////////////////////////////////
-// PhyObject public
-////////////////////////////////////////////////////////////////////////////////
-
-PhyObject::PhyObject(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, phy_obj_type type){
-  this->position = position;
-  this->rotation = rotation;
-  this->size = size;
-  this->colour = colour;
-  this->time = time;
-  this->type = type;
-}
-
-
-
-//------------------------------------------------------------------------------
-PhyObject::~PhyObject(){}
-
-
-
-//------------------------------------------------------------------------------
-void PhyObject::set_id(id obj_id){  this->obj_id = obj_id;  }
-
-
-
-//------------------------------------------------------------------------------
-id PhyObject::get_id(){  return obj_id;  }
-
-
-
-//------------------------------------------------------------------------------
-uint PhyObject::get_time(){  return time;  }
-
-
-
-//------------------------------------------------------------------------------
-bool PhyObject::is_active(){  return activated;  }
-
-
-
-//------------------------------------------------------------------------------
-void PhyObject::activate(){  activated = true;  }
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-// PhyObject private
-////////////////////////////////////////////////////////////////////////////////
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Scene public
-////////////////////////////////////////////////////////////////////////////////
-
 Scene::Scene(){}
 
 
@@ -99,6 +44,7 @@ Scene::~Scene(){}
 //------------------------------------------------------------------------------
 void Scene::set_name(const std::string& name){
   this->name = name;
+  window = std::make_shared<Window>(name);
   name_ready = true;
 }
 
@@ -121,7 +67,20 @@ void Scene::set_time(uint time){
 
 
 //------------------------------------------------------------------------------
-void Scene::add_object(std::shared_ptr<PhyObject> obj){
+void Scene::add_object(glm::vec2 pos, float rot, float size, glm::vec3 colour, uint time, phy_obj_type type){
+  // safety
+  if( ! is_ready() )
+    throw std::runtime_error("Scene needs to be initialized properly before Phy_Objects can be added!");
+  
+  // add objects
+  std::shared_ptr<PhyObject> obj;
+  switch(type){
+    case triangle:  obj = std::make_shared<PhyTriangle>(pos, rot, size, colour, time, window); break;
+    case rectangle: obj = std::make_shared<PhyRect>(pos, rot, size, colour, time, window); break;
+    case circle:    obj = std::make_shared<PhyCircle>(pos, rot, size, colour, time, window); break;
+    default: throw std::runtime_error("Invalid Phy_Object type");
+  }
+  
   this->phy_objects_wait.push_back(obj);
 }
 
@@ -129,17 +88,16 @@ void Scene::add_object(std::shared_ptr<PhyObject> obj){
 
 //------------------------------------------------------------------------------
 void Scene::start(){
-  if( is_ready() )
-    run();
-    
-  else
+  if( ! is_ready() )
     throw std::runtime_error("Scene has not been initialized properly.");
+  
+  run();  
 }
 
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Scene private
+// private
 ////////////////////////////////////////////////////////////////////////////////
 
 bool Scene::is_ready(){
@@ -150,7 +108,7 @@ bool Scene::is_ready(){
 
 //------------------------------------------------------------------------------
 void Scene::run(){
-  window = std::make_unique<Window>(name);
+  ///window = std::make_shared<Window>(name);
   window->wait_for_setup();
   window->set_background_colour(background_colour);
   
@@ -218,39 +176,7 @@ void Scene::check_activate_objects(){
 
 
 //------------------------------------------------------------------------------
-void Scene::activate_object(std::shared_ptr<PhyObject> obj){
-  // safety
-  if( ! is_ready() )
-    throw std::runtime_error("Scene needs to be initialized properly before Phy_Objects can be added!");
-  
-  // add graphics_object
-  glm::vec3 pos = {obj->position.x, obj->position.y, 0.0f};
-  id id;
-  
-  switch(obj->type){
-    case triangle:{
-      id = window->add_gobject(
-        std::make_shared<GTriangle>(pos, obj->rotation, obj->size, obj->colour)
-      );
-      break;
-    }
-    case rectangle:{
-      id = window->add_gobject(
-        std::make_shared<GRect>(pos, obj->rotation, obj->size, obj->colour)
-      );
-      break;
-    }
-    case circle:{
-      id = window->add_gobject(
-        std::make_shared<GCircle>(pos, obj->rotation, obj->size, obj->colour)
-      );
-      break;
-    }
-    default: throw std::runtime_error("Invalid Phy_Object type");
-  }
-  
-  // store phy/g-objects
-  obj->set_id(id);
+void Scene::activate_object(std::shared_ptr<PhyObject> obj){  
   obj->activate();
   this->phy_objects.push_back(obj);
 }
