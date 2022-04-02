@@ -32,7 +32,10 @@ SOFTWARE.
 
 
 
-Scene::Scene(){}
+Scene::Scene(){
+  window = std::make_shared<Window>("Uninitialised Name");
+  window->wait_for_setup();
+}
 
 
 
@@ -43,17 +46,14 @@ Scene::~Scene(){}
 
 //------------------------------------------------------------------------------
 void Scene::set_name(const std::string& name){
-  this->name = name;
-  window = std::make_shared<Window>(name);
-  name_ready = true;
+  window->set_window_name(name);
 }
 
 
 
 //------------------------------------------------------------------------------
 void Scene::set_background_colour(glm::vec3 colour){
-  this->background_colour = colour;
-  background_ready = true;
+  window->set_background_colour(background_colour);
 }
 
 
@@ -61,17 +61,12 @@ void Scene::set_background_colour(glm::vec3 colour){
 //------------------------------------------------------------------------------
 void Scene::set_time(uint time){
   this->time = time;
-  time_ready = true;
 }
 
 
 
 //------------------------------------------------------------------------------
 void Scene::add_object(glm::vec2 pos, float rot, float size, glm::vec3 colour, uint time, phy_obj_type type){
-  // safety
-  if( ! is_ready() )
-    throw std::runtime_error("Scene needs to be initialized properly before Phy_Objects can be added!");
-  
   // add objects
   std::shared_ptr<PhyObject> obj;
   switch(type){
@@ -81,16 +76,13 @@ void Scene::add_object(glm::vec2 pos, float rot, float size, glm::vec3 colour, u
     default: throw std::runtime_error("Invalid Phy_Object type");
   }
   
-  this->phy_objects_wait.push_back(obj);
+  this->phy_objects_wait.insert({next_id++, obj});
 }
 
 
 
 //------------------------------------------------------------------------------
 void Scene::start(){
-  if( ! is_ready() )
-    throw std::runtime_error("Scene has not been initialized properly.");
-  
   run();  
 }
 
@@ -100,19 +92,9 @@ void Scene::start(){
 // private
 ////////////////////////////////////////////////////////////////////////////////
 
-bool Scene::is_ready(){
-  return name_ready && background_ready && time_ready;
-}
-
-
-
-//------------------------------------------------------------------------------
 void Scene::run(){
-  ///window = std::make_shared<Window>(name);
-  window->wait_for_setup();
-  window->set_background_colour(background_colour);
-  
   loop_timer();
+  
   std::cout << "Done.\n";
 }
 
@@ -168,15 +150,16 @@ void Scene::loop_tick(){
 //------------------------------------------------------------------------------
 void Scene::check_activate_objects(){
   for(auto &o : phy_objects_wait){
-    if(o->get_time() <= ticks_passed && ! o->is_active())
-      activate_object(o);
+    if(o.second->get_time() <= ticks_passed && ! o.second->is_active())
+      activate_object(o.first);
   }
 }
 
 
 
 //------------------------------------------------------------------------------
-void Scene::activate_object(std::shared_ptr<PhyObject> obj){  
-  obj->activate();
-  this->phy_objects.push_back(obj);
+void Scene::activate_object(id obj_id){  
+  phy_objects_wait.at(obj_id)->activate();
+  phy_objects.push_back( phy_objects_wait.at(obj_id) );
+  phy_objects_wait.erase(obj_id);
 }

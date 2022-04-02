@@ -27,6 +27,7 @@ SOFTWARE.
 #pragma once
 
 #include <vector>
+#include <unordered_map>
 #include <string>
 #include <memory>
 
@@ -60,17 +61,16 @@ public:
     uint time,
     phy_obj_type type
   );
-  bool is_ready();
   void start();
   
 private:
-  bool name_ready = false;
-  bool background_ready = false;
-  bool time_ready = false;
   std::string name;
   glm::vec3 background_colour;
   uint time;
-  std::vector< std::shared_ptr<PhyObject> > phy_objects_wait;
+  std::unordered_map<
+    id, std::shared_ptr<PhyObject>
+  > phy_objects_wait;
+  id next_id = 0;
   std::vector< std::shared_ptr<PhyObject> > phy_objects;
   std::shared_ptr<Window> window;
   uint ticks_passed = 0;
@@ -80,5 +80,5 @@ private:
     uint current_time();
     void loop_tick();
   void check_activate_objects();
-  void activate_object(std::shared_ptr<PhyObject> object);
+  void activate_object(id obj_id);
 };
