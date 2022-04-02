@@ -49,14 +49,19 @@ public:
     float rotation,
     float size,
     glm::vec3 colour,
-    uint time
+    uint time,
+    std::shared_ptr<Window> window
   );
   ~PhyObject();
   uint get_time();
   bool is_active();
   virtual void activate() = 0;
+  void update();
+  void set_position(glm::vec2 pos);
+  void set_rotation(float rot);
   
 protected:
+  std::shared_ptr<Window> window;
   id gobj_id;
   uint time;
   bool activated = false;
@@ -79,7 +84,6 @@ public:
   void activate();
   
 protected:
-  std::shared_ptr<Window> window;
 };
 
 
@@ -99,7 +103,6 @@ public:
   void activate();
   
 protected:
-  std::shared_ptr<Window> window;
 };
 
 
@@ -119,5 +122,4 @@ public:
   void activate();
   
 protected:
-  std::shared_ptr<Window> window;
 };

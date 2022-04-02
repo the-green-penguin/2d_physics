@@ -79,6 +79,7 @@ private:
   void loop_timer();
     uint current_time();
     void loop_tick();
-  void check_activate_objects();
-  void activate_object(id obj_id);
+      void check_activate_objects();
+        void activate_object(id obj_id);
+      void update_objects();
 };

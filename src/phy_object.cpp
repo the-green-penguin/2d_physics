@@ -34,12 +34,13 @@ SOFTWARE.
 // Object public
 ////////////////////////////////////////////////////////////////////////////////
 
-PhyObject::PhyObject(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time){
+PhyObject::PhyObject(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, std::shared_ptr<Window> window){
   this->position = position;
   this->rotation = rotation;
   this->size = size;
   this->colour = colour;
   this->time = time;
+  this->window = window;
 }
 
 
@@ -59,6 +60,30 @@ bool PhyObject::is_active(){  return activated;  }
 
 
 
+//------------------------------------------------------------------------------
+void PhyObject::update(){
+  // test
+  set_position({position.x + 1, position.y});
+}
+
+
+
+//------------------------------------------------------------------------------
+void PhyObject::set_position(glm::vec2 pos){
+  position = pos;
+  window->set_gobj_position(gobj_id, {pos.x, pos.y, 0.0f});
+}
+
+
+
+//------------------------------------------------------------------------------
+void PhyObject::set_rotation(float rot){
+  rotation = rot;
+  window->set_gobj_rotation(gobj_id, rot);
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Object private
 ////////////////////////////////////////////////////////////////////////////////
@@ -68,10 +93,7 @@ bool PhyObject::is_active(){  return activated;  }
 ////////////////////////////////////////////////////////////////////////////////
 
 PhyTriangle::PhyTriangle(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, std::shared_ptr<Window> window)
-  : PhyObject(position, rotation, size, colour, time){
-    
-    this->window = window;
-}
+  : PhyObject(position, rotation, size, colour, time, window){}
 
 
 
@@ -101,10 +123,7 @@ void PhyTriangle::activate(){
 ////////////////////////////////////////////////////////////////////////////////
 
 PhyRect::PhyRect(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, std::shared_ptr<Window> window)
-  : PhyObject(position, rotation, size, colour, time){
-    
-    this->window = window;
-}
+  : PhyObject(position, rotation, size, colour, time, window){}
 
 
 
@@ -134,10 +153,7 @@ void PhyRect::activate(){
 ////////////////////////////////////////////////////////////////////////////////
 
 PhyCircle::PhyCircle(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, std::shared_ptr<Window> window)
-  : PhyObject(position, rotation, size, colour, time){
-    
-    this->window = window;
-}
+  : PhyObject(position, rotation, size, colour, time, window){}
 
 
 

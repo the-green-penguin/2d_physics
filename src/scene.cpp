@@ -142,6 +142,7 @@ uint Scene::current_time(){
 //------------------------------------------------------------------------------
 void Scene::loop_tick(){
   check_activate_objects();
+  update_objects();
   ticks_passed++;
 }
 
@@ -162,4 +163,12 @@ void Scene::activate_object(id obj_id){
   phy_objects_wait.at(obj_id)->activate();
   phy_objects.push_back( phy_objects_wait.at(obj_id) );
   phy_objects_wait.erase(obj_id);
+}
+
+
+
+//------------------------------------------------------------------------------
+void Scene::update_objects(){  
+  for(auto &o : phy_objects)
+    o->update();
 }
