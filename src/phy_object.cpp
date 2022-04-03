@@ -27,6 +27,7 @@ SOFTWARE.
 #include "phy_object.h"
 
 #include <iostream>
+#include <math.h>
 
 
 
@@ -84,16 +85,62 @@ void PhyObject::set_rotation(float rot){
 
 
 
+//------------------------------------------------------------------------------
+glm::vec2 PhyObject::get_position(){  return position;  }
+
+
+
+//------------------------------------------------------------------------------
+float PhyObject::get_rotation(){  return rotation;  }
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Object private
 ////////////////////////////////////////////////////////////////////////////////
+
+void PhyObject::init(){
+  calc_inertia_tensor();
+  calc_center_of_mass();
+}
+
+
+
+//------------------------------------------------------------------------------
+void PhyObject::calc_inertia_tensor(){
+  float i = 0.0f;
+  float p_mass = 1.0f;   // assume even mass distribution in rigidbodies
+  
+  for(auto &p : points)
+    i += p_mass * glm::dot(p, p);
+}
+
+
+
+//------------------------------------------------------------------------------
+void PhyObject::calc_center_of_mass(){
+  center_of_mass = {0.0f, 0.0f};
+  float p_mass = 1.0f;   // assume even mass distribution in rigidbodies
+  
+  for(auto &p : points)
+    center_of_mass += p_mass * p;
+    
+  center_of_mass /= points.size();
+}
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Triangle public
 ////////////////////////////////////////////////////////////////////////////////
 
 PhyTriangle::PhyTriangle(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, std::shared_ptr<Window> window)
-  : PhyObject(position, rotation, size, colour, time, window){}
+  : PhyObject(position, rotation, size, colour, time, window){
+
+    calc_points();
+    init();
+  
+}
 
 
 
@@ -117,6 +164,19 @@ void PhyTriangle::activate(){
 ////////////////////////////////////////////////////////////////////////////////
 // Triangle private
 ////////////////////////////////////////////////////////////////////////////////
+
+void PhyTriangle::calc_points(){
+  points.clear();
+  
+  float height = size * sqrt(3) / 2;
+  float third = 1.0f / 3.0f;
+  
+  points.push_back({ size / 2   , - third * height   });
+  points.push_back({ - size / 2 , - third * height   });
+  points.push_back({ 0.0f       , 2 * third * height });
+}
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Rect public
@@ -148,6 +208,19 @@ void PhyRect::activate(){
 // Rect private
 ////////////////////////////////////////////////////////////////////////////////
 
+void PhyRect::calc_points(){
+  points.clear();
+  
+  float half = size / 2;
+  
+  points.push_back({ - half , - half });
+  points.push_back({ - half , half   });
+  points.push_back({ half   , - half });
+  points.push_back({ half   , half   });
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Circle public
 ////////////////////////////////////////////////////////////////////////////////
@@ -177,3 +250,18 @@ void PhyCircle::activate(){
 ////////////////////////////////////////////////////////////////////////////////
 // Cirlce private
 ////////////////////////////////////////////////////////////////////////////////
+
+void PhyCircle::calc_points(){
+  points.clear();
+  
+  float half = size / 2;
+  
+  for(uint i = 0; i < point_count; i++){
+    float segment = 360.0f * i / point_count;
+    float y = half * sin(segment * M_PI / 180);
+    float x = half * cos(segment * M_PI / 180);
+    points.push_back( {x, y} );
+  }
+}
+
+

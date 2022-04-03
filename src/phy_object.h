@@ -39,11 +39,6 @@ SOFTWARE.
 
 class PhyObject{
 public:
-  glm::vec2 position;
-  float rotation;
-  float size;
-  glm::vec3 colour;
-  
   PhyObject(
     glm::vec2 position,
     float rotation,
@@ -59,12 +54,27 @@ public:
   void update();
   void set_position(glm::vec2 pos);
   void set_rotation(float rot);
+  glm::vec2 get_position();
+  float get_rotation();
   
 protected:
   std::shared_ptr<Window> window;
   id gobj_id;
   uint time;
   bool activated = false;
+  
+  glm::vec2 position;
+  float rotation;
+  float size;
+  glm::vec3 colour;
+  std::vector< glm::vec2 > points;
+  glm::vec2 center_of_mass = {0.0f, 0.0f};
+  float intertia_tensor = 0.0f;
+  
+  virtual void calc_points() = 0;
+  void init();
+  void calc_center_of_mass();
+  void calc_inertia_tensor();
 };
 
 
@@ -84,6 +94,7 @@ public:
   void activate();
   
 protected:
+  void calc_points();
 };
 
 
@@ -103,6 +114,7 @@ public:
   void activate();
   
 protected:
+  void calc_points();
 };
 
 
@@ -122,4 +134,7 @@ public:
   void activate();
   
 protected:
+  uint point_count = 16;
+  
+  void calc_points();
 };
