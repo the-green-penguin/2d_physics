@@ -115,11 +115,11 @@ void PhyObject::init(){
 
 //------------------------------------------------------------------------------
 void PhyObject::calc_inertia_tensor(){
-  float i = 0.0f;
+  intertia_tensor = 0.0f;
   float p_mass = 1.0f;   // assume even mass distribution in rigidbodies
   
   for(auto &p : points)
-    i += p_mass * glm::dot(p, p);
+    intertia_tensor += p_mass * glm::dot(p, p);
 }
 
 
@@ -207,7 +207,12 @@ void PhyTriangle::calc_points(){
 ////////////////////////////////////////////////////////////////////////////////
 
 PhyRect::PhyRect(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, std::shared_ptr<Window> window)
-  : PhyObject(position, rotation, size, colour, time, window){}
+  : PhyObject(position, rotation, size, colour, time, window){
+
+    calc_points();
+    init();
+  
+}
 
 
 
@@ -250,7 +255,12 @@ void PhyRect::calc_points(){
 ////////////////////////////////////////////////////////////////////////////////
 
 PhyCircle::PhyCircle(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, std::shared_ptr<Window> window)
-  : PhyObject(position, rotation, size, colour, time, window){}
+  : PhyObject(position, rotation, size, colour, time, window){
+
+    calc_points();
+    init();
+  
+}
 
 
 
