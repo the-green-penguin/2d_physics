@@ -116,7 +116,7 @@ void PhyObject::init(){
 //------------------------------------------------------------------------------
 void PhyObject::calc_inertia_tensor(){
   intertia_tensor = 0.0f;
-  float p_mass = 1.0f;   // assume even mass distribution in rigidbodies
+  float p_mass = mass / points.size();   // assume even mass distribution in rigidbodies
   
   for(auto &p : points)
     intertia_tensor += p_mass * glm::dot(p, p);
@@ -127,7 +127,7 @@ void PhyObject::calc_inertia_tensor(){
 //------------------------------------------------------------------------------
 void PhyObject::calc_center_of_mass(){
   center_of_mass = {0.0f, 0.0f};
-  float p_mass = 1.0f;   // assume even mass distribution in rigidbodies
+  float p_mass = mass / points.size();   // assume even mass distribution in rigidbodies
   
   for(auto &p : points)
     center_of_mass += p_mass * p;
@@ -141,7 +141,8 @@ void PhyObject::calc_center_of_mass(){
 void PhyObject::update_rotation(){
   set_rotation(rotation + step_time * angular_velocity);   // update phy & graphics
   
-  angular_velocity = angular_velocity + step_time * torque / intertia_tensor;
+  float change = adjustment_const * (torque / intertia_tensor);
+  angular_velocity = angular_velocity + (step_time * change);
   torque = 0.0f;
 }
 

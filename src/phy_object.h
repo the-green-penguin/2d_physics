@@ -74,6 +74,8 @@ protected:
   float angular_velocity = 0.0f;
   float torque = 0.0f;
   float step_time = 1.0f / 100.0f;   // duration of tick in seconds
+  float mass = 0.1f;
+  float adjustment_const = 100.0f;   // adjust this until simulation looks good
   
   virtual void calc_points() = 0;
   void init();
