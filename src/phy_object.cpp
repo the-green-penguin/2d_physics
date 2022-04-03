@@ -63,8 +63,8 @@ bool PhyObject::is_active(){  return activated;  }
 
 //------------------------------------------------------------------------------
 void PhyObject::update(){
-  // test
-  set_position({position.x + 1, position.y});
+  update_rotation();
+  update_position();
 }
 
 
@@ -92,6 +92,13 @@ glm::vec2 PhyObject::get_position(){  return position;  }
 
 //------------------------------------------------------------------------------
 float PhyObject::get_rotation(){  return rotation;  }
+
+
+
+//------------------------------------------------------------------------------
+void PhyObject::apply_force(glm::vec2 force, glm::vec2 pos){
+  torque = force.x * pos.y - force.y * pos.x;   // cross product
+}
 
 
 
@@ -126,6 +133,23 @@ void PhyObject::calc_center_of_mass(){
     center_of_mass += p_mass * p;
     
   center_of_mass /= points.size();
+}
+
+
+
+//------------------------------------------------------------------------------
+void PhyObject::update_rotation(){
+  set_rotation(rotation + step_time * angular_velocity);   // update phy & graphics
+  
+  angular_velocity = angular_velocity + step_time * torque / intertia_tensor;
+  torque = 0.0f;
+}
+
+
+
+//------------------------------------------------------------------------------
+void PhyObject::update_position(){
+  
 }
 
 

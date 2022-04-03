@@ -56,6 +56,7 @@ public:
   void set_rotation(float rot);
   glm::vec2 get_position();
   float get_rotation();
+  void apply_force(glm::vec2 force, glm::vec2 position);
   
 protected:
   std::shared_ptr<Window> window;
@@ -70,11 +71,16 @@ protected:
   std::vector< glm::vec2 > points;
   glm::vec2 center_of_mass = {0.0f, 0.0f};
   float intertia_tensor = 0.0f;
+  float angular_velocity = 0.0f;
+  float torque = 0.0f;
+  float step_time = 1.0f / 100.0f;   // duration of tick in seconds
   
   virtual void calc_points() = 0;
   void init();
   void calc_center_of_mass();
   void calc_inertia_tensor();
+  void update_rotation();
+  void update_position();
 };
 
 
