@@ -56,6 +56,8 @@ public:
   void set_rotation(float rot);
   glm::vec2 get_position();
   float get_rotation();
+  float get_size();
+  std::vector< glm::vec2 > get_points();   // compiler should optimise 'return by value' for std types
   void apply_force(glm::vec2 force, glm::vec2 position);
   
 protected:
@@ -76,6 +78,8 @@ protected:
   float step_time = 1.0f / 100.0f;   // duration of tick in seconds
   float mass = 0.1f;
   float adjustment_const = 100.0f;   // adjust this until simulation looks good
+  float bounciness = 0.5f;   // keep between 0 and 1 !
+  glm::vec2 velocity = {0.0f, 0.0f};
   
   virtual void calc_points() = 0;
   void init();

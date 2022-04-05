@@ -37,7 +37,7 @@ SOFTWARE.
 
 PhyObject::PhyObject(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, std::shared_ptr<Window> window){
   this->position = position;
-  this->rotation = rotation;
+  this->rotation = fmod(rotation, 360.0f);
   this->size = size;
   this->colour = colour;
   this->time = time;
@@ -79,8 +79,8 @@ void PhyObject::set_position(glm::vec2 pos){
 
 //------------------------------------------------------------------------------
 void PhyObject::set_rotation(float rot){
-  rotation = rot;
-  window->set_gobj_rotation(gobj_id, rot);
+  rotation = fmod(rot, 360.0f);
+  window->set_gobj_rotation(gobj_id, rotation);
 }
 
 
@@ -92,6 +92,30 @@ glm::vec2 PhyObject::get_position(){  return position;  }
 
 //------------------------------------------------------------------------------
 float PhyObject::get_rotation(){  return rotation;  }
+
+
+
+//------------------------------------------------------------------------------
+float PhyObject::get_size(){  return size;  }
+
+
+
+//------------------------------------------------------------------------------
+std::vector< glm::vec2 > PhyObject::get_points(){
+  // adjust to rotation
+  std::vector< glm::vec2 > ret = points;
+  float sine = sin( glm::radians(rotation) );
+  float cosine = cos( glm::radians(rotation) );
+  
+  for(auto &p : ret){
+    float x = p.x * cosine - p.y * sine;
+    float y = p.x * sine + p.y * cosine;
+    p.x = x;
+    p.y = y;
+  }
+  
+  return ret;
+}
 
 
 
@@ -293,8 +317,8 @@ void PhyCircle::calc_points(){
   
   for(uint i = 0; i < point_count; i++){
     float segment = 360.0f * i / point_count;
-    float y = half * sin(segment * M_PI / 180);
-    float x = half * cos(segment * M_PI / 180);
+    float y = half * sin( glm::radians(segment) );
+    float x = half * cos( glm::radians(segment) );
     points.push_back( {x, y} );
   }
 }

@@ -30,6 +30,8 @@ SOFTWARE.
 #include <exception>
 #include <chrono>
 
+#include "collision.h"
+
 
 
 Scene::Scene(){
@@ -144,6 +146,14 @@ void Scene::loop_tick(){
   check_activate_objects();
   update_objects();
   ticks_passed++;
+  
+  // test
+  if(phy_objects.size() > 1){
+    phy_objects[0]->apply_force({100.0f, 0.0f}, {1.0f, 1.0f});
+    Collision col(phy_objects[0], phy_objects[1]);
+    if( col.has_contact() )
+      std::cout << "!\n";
+  }
 }
 
 
