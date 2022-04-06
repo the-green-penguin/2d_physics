@@ -70,7 +70,7 @@ protected:
   float rotation;
   float size;
   glm::vec3 colour;
-  std::vector< glm::vec2 > points;
+  std::vector< glm::vec2 > points;   // order of ponits matter!
   glm::vec2 center_of_mass = {0.0f, 0.0f};
   float intertia_tensor = 0.0f;
   float angular_velocity = 0.0f;

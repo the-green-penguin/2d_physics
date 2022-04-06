@@ -114,6 +114,12 @@ std::vector< glm::vec2 > PhyObject::get_points(){
     p.y = y;
   }
   
+  // adjust to world position
+  for(auto &p : ret){
+    p.x += position.x;
+    p.y += position.y;
+  }
+  
   return ret;
 }
 
@@ -269,8 +275,8 @@ void PhyRect::calc_points(){
   
   points.push_back({ - half , - half });
   points.push_back({ - half , half   });
-  points.push_back({ half   , - half });
   points.push_back({ half   , half   });
+  points.push_back({ half   , - half });
 }
 
 

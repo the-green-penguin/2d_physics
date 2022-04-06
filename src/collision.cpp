@@ -64,19 +64,19 @@ void Collision::get_points(){
 
 //------------------------------------------------------------------------------
 void Collision::get_edges(){
-  // edges_0
+  // polygon 0
   glm::vec2 prev_point = points_0.back();
   
   for(auto &p : points_0){
-    edges_0.push_back( {prev_point, p} );
+    edges.push_back( {prev_point, p} );
     prev_point = p;
   }
   
-  // edges_1
+  // polygon 1
   prev_point = points_1.back();
   
   for(auto &p : points_1){
-    edges_1.push_back( {prev_point, p} );
+    edges.push_back( {prev_point, p} );
     prev_point = p;
   }
 }
@@ -103,26 +103,20 @@ bool Collision::check_contact(){
 
 //------------------------------------------------------------------------------
 bool Collision::check_contact_detailed(){
-  bool ret_0 = false;
-  bool ret_1 = false;
+  bool overlap;
   
-  for(auto &e : edges_0){
+  for(auto &e : edges){
     glm::vec2 axis = perpendicular(e.point_0 - e.point_1);
-    ret_0 = check_proj_overlap(
+    overlap = check_proj_overlap(
       project_polygon(axis, points_0),
       project_polygon(axis, points_1)
     );
+    
+    if( ! overlap)
+      return false;
   }
   
-  for(auto &e : edges_1){
-    glm::vec2 axis = perpendicular(e.point_0 - e.point_1);
-    ret_1 = check_proj_overlap(
-      project_polygon(axis, points_0),
-      project_polygon(axis, points_1)
-    );
-  }
-  
-  return ret_0 || ret_1;
+  return true;   // no separating line found
 }
 
 
@@ -162,5 +156,5 @@ bool Collision::check_proj_overlap(Collision::projection proj_0, Collision::proj
 
 //------------------------------------------------------------------------------
 glm::vec2 Collision::perpendicular(glm::vec2 vec){
-  return { - vec.y, vec.x};
+  return glm::normalize( glm::vec2( - vec.y, vec.x) );
 }

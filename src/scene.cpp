@@ -153,6 +153,9 @@ void Scene::loop_tick(){
     Collision col(phy_objects[0], phy_objects[1]);
     if( col.has_contact() )
       std::cout << "!\n";
+      
+    else
+      std::cout << "\n";
   }
 }
 

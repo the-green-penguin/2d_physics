@@ -58,8 +58,7 @@ protected:
   std::shared_ptr< PhyObject > phy_obj_1;
   std::vector< glm::vec2 > points_0;
   std::vector< glm::vec2 > points_1;
-  std::vector< edge > edges_0;
-  std::vector< edge > edges_1;
+  std::vector< edge > edges;
   
   void get_edges();
   void get_points();
