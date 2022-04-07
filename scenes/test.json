@@ -7,7 +7,7 @@
     [
       "triangle":
         {
-          "position": [0.0f, -50.0f],
+          "position": [0.0f, -170.0f],
           "rotation": 0.0f,
           "size": 50.0f,
           "color": [1.0f, 0.0f, 0.0f],
@@ -16,7 +16,7 @@
         
       "rectangle":
         {
-          "position": [0.0f, 0.0f],
+          "position": [-20.0f, -120.0f],
           "rotation": 0.0f,
           "size": 50.0f,
           "color": [0.0f, 1.0f, 0.0f],

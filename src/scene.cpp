@@ -150,12 +150,6 @@ void Scene::loop_tick(){
   // test
   if(phy_objects.size() > 1){
     phy_objects[0]->apply_force({100.0f, 0.0f}, {1.0f, 1.0f});
-    Collision col(phy_objects[0], phy_objects[1]);
-    if( col.has_contact() )
-      std::cout << "!\n";
-      
-    else
-      std::cout << "\n";
   }
 }
 
@@ -181,7 +175,23 @@ void Scene::activate_object(id obj_id){
 
 
 //------------------------------------------------------------------------------
-void Scene::update_objects(){  
+void Scene::update_objects(){
+  // collisions
+  handle_collisions();
+  
+  // update individual objects
   for(auto &o : phy_objects)
     o->update();
+}
+
+
+
+//------------------------------------------------------------------------------
+void Scene::handle_collisions(){
+  for(std::size_t i = 0; i < phy_objects.size(); i++){
+    for(std::size_t j = i + 1; j < phy_objects.size(); j++){
+      Collision col(phy_objects[i], phy_objects[j]);
+      col.handle();
+    }
+  }
 }

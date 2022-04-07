@@ -82,4 +82,5 @@ private:
       void check_activate_objects();
         void activate_object(id obj_id);
       void update_objects();
+        void handle_collisions();
 };

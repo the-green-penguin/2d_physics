@@ -51,6 +51,16 @@ bool Collision::has_contact(){  return contact;  }
 
 
 
+//------------------------------------------------------------------------------
+void Collision::handle(){
+  if( ! contact) return;   // skip if there is no contact
+  
+  glm::vec2 center_vec = center_0 - center_1;
+  std::cout << center_vec.x << " " << center_vec.y << "\n";
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // private
 ////////////////////////////////////////////////////////////////////////////////
@@ -58,6 +68,8 @@ bool Collision::has_contact(){  return contact;  }
 void Collision::get_points(){
   points_0 = phy_obj_0->get_points();
   points_1 = phy_obj_1->get_points();
+  center_0 = phy_obj_0->get_position();
+  center_1 = phy_obj_1->get_position();
 }
 
 
@@ -87,10 +99,7 @@ void Collision::get_edges(){
 bool Collision::check_contact(){
   // approximate (big distance -> no collision)
   float max_distance = phy_obj_0->get_size() + phy_obj_1->get_size();
-  float distance = glm::distance(
-    phy_obj_0->get_position(),
-    phy_obj_1->get_position()
-  );
+  float distance = glm::distance(center_0, center_1);
   
   if(distance > max_distance)
     return false;
@@ -106,13 +115,14 @@ bool Collision::check_contact_detailed(){
   bool overlap;
   
   for(auto &e : edges){
-    glm::vec2 axis = perpendicular(e.point_0 - e.point_1);
+    glm::vec2 edge_vector = e.point_0 - e.point_1;
+    glm::vec2 axis = perpendicular(edge_vector);
     overlap = check_proj_overlap(
       project_polygon(axis, points_0),
       project_polygon(axis, points_1)
     );
     
-    if( ! overlap)
+    if( ! overlap)   // found separating line
       return false;
   }
   
@@ -129,13 +139,14 @@ Collision::projection Collision::project_polygon(glm::vec2 axis, std::vector< gl
   float min = std::numeric_limits<float>::max();
   float max = std::numeric_limits<float>::min();
   
+  // project point onto axis and compare to prev min/max
   for(auto &p : polygon){
     float proj = glm::dot(axis, p);
     
     if(proj < min)
       min = proj;
       
-    else if(proj > max)
+    if(proj > max)
       max = proj;
   }
   
