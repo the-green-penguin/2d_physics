@@ -27,7 +27,6 @@ SOFTWARE.
 #pragma once
 
 #include <vector>
-#include <queue>
 #include <string>
 #include <memory>
 
@@ -43,8 +42,4 @@ public:
   
 private:
   File_Handler file_handler;
-  std::queue< std::shared_ptr< Scene > > scenes;
-  
-  void init(const std::vector< std::string >& file_names);
-  void execute();
 };

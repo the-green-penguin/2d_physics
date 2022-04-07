@@ -29,6 +29,7 @@ SOFTWARE.
 #include <iostream>
 #include <exception>
 #include <chrono>
+using namespace std::chrono;
 
 #include "collision.h"
 
@@ -97,7 +98,16 @@ void Scene::start(){
 void Scene::run(){
   loop_timer();
   
+  // finished
   std::cout << "Done.\n";
+  
+  // wait for window to close
+  while(true){
+    if( window->got_closed() )
+      break;
+    
+    std::this_thread::sleep_for(10ms);
+  }
 }
 
 
@@ -105,7 +115,6 @@ void Scene::run(){
 //------------------------------------------------------------------------------
 void Scene::loop_timer(){
   // init
-  using namespace std::chrono;
   uint time_prev = current_time();
   uint time_diff = 0;
   
@@ -129,9 +138,7 @@ void Scene::loop_timer(){
 
 
 //------------------------------------------------------------------------------
-uint Scene::current_time(){
-  using namespace std::chrono;
-  
+uint Scene::current_time(){  
   auto now = time_point_cast<microseconds>(steady_clock::now());
   auto time = now.time_since_epoch();
   auto time_ms = std::chrono::duration_cast<std::chrono::microseconds>(time);
