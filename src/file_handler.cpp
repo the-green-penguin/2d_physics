@@ -202,15 +202,15 @@ phy_obj_type File_Handler::parse_object_type(){
 glm::vec2 File_Handler::parse_object_position(){
   check_char(':');
   
-  std::vector<float> colour = parse_float_array();
-  if(colour.size() != 2){
+  std::vector<float> pos = parse_float_array();
+  if(pos.size() != 2){
     std::stringstream message;
     message << "Invalid file format! Expected <[float, float]> after '\"position\":' in line " << line << ".";
     throw std::runtime_error(message.str());
   }
 
   check_char(',');
-  return glm::vec2(colour[0], colour[1]);
+  return glm::vec2(pos[0], pos[1]);
 }
 
 
@@ -302,7 +302,7 @@ char File_Handler::next_char(){
 char File_Handler::next_num(){
   char c = next_char();
   
-  if( ! isdigit(c) && c != '.' ){
+  if( ! isdigit(c) && c != '.' && c != '-' ){
     std::stringstream message;
     message << "Invalid file format! Expected <number> but found '" << c << "' in line " << line << ".";
     throw std::runtime_error(message.str());
@@ -373,7 +373,7 @@ uint File_Handler::next_uint(){
 
 //------------------------------------------------------------------------------
 bool File_Handler::valid_char(char c){
-  if(isalnum(c) || c == '"' || c == ':' || c == ',' || c == '.' || c == '{' || c == '}' || c == '[' || c == ']')
+  if(isalnum(c) || c == '"' || c == ':' || c == ',' || c == '.' || c == '{' || c == '}' || c == '[' || c == ']' || c == '-')
     return true;
     
   return false;
