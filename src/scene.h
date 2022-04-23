@@ -72,7 +72,7 @@ private:
   > phy_objects_wait;
   id next_id = 0;
   std::vector< std::shared_ptr<PhyObject> > phy_objects;
-  std::shared_ptr<Window> window;
+  id window_id;
   uint ticks_passed = 0;
   
   void run();

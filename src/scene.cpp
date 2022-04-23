@@ -36,8 +36,7 @@ using namespace std::chrono;
 
 
 Scene::Scene(){
-  window = std::make_shared<Window>("Uninitialised Name");
-  window->wait_for_setup();
+  window_id = Window::open("Uninitialised Name");
 }
 
 
@@ -49,14 +48,14 @@ Scene::~Scene(){}
 
 //------------------------------------------------------------------------------
 void Scene::set_name(const std::string& name){
-  window->set_window_name(name);
+  Window::set_window_name(window_id, name);
 }
 
 
 
 //------------------------------------------------------------------------------
 void Scene::set_background_colour(glm::vec3 colour){
-  window->set_background_colour(background_colour);
+  Window::set_background_colour(window_id, background_colour);
 }
 
 
@@ -73,9 +72,9 @@ void Scene::add_object(glm::vec2 pos, float rot, float size, glm::vec3 colour, u
   // add objects
   std::shared_ptr<PhyObject> obj;
   switch(type){
-    case triangle:  obj = std::make_shared<PhyTriangle>(pos, rot, size, colour, time, window); break;
-    case rectangle: obj = std::make_shared<PhyRect>(pos, rot, size, colour, time, window); break;
-    case circle:    obj = std::make_shared<PhyCircle>(pos, rot, size, colour, time, window); break;
+    case triangle:  obj = std::make_shared<PhyTriangle>(pos, rot, size, colour, time, window_id); break;
+    case rectangle: obj = std::make_shared<PhyRect>(pos, rot, size, colour, time, window_id); break;
+    case circle:    obj = std::make_shared<PhyCircle>(pos, rot, size, colour, time, window_id); break;
     default: throw std::runtime_error("Invalid Phy_Object type");
   }
   
@@ -103,7 +102,7 @@ void Scene::run(){
   
   // wait for window to close
   while(true){
-    if( window->got_closed() )
+    if( Window::got_closed(window_id) )
       break;
     
     std::this_thread::sleep_for(10ms);
@@ -119,7 +118,7 @@ void Scene::loop_timer(){
   uint time_diff = 0;
   
   // wait for tick
-  while(ticks_passed < time && ! window->got_closed()){
+  while(ticks_passed < time && ! Window::got_closed(window_id)){
     // time since last check
     time_diff += current_time() - time_prev;
     

@@ -35,13 +35,13 @@ SOFTWARE.
 // Object public
 ////////////////////////////////////////////////////////////////////////////////
 
-PhyObject::PhyObject(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, std::shared_ptr<Window> window){
+PhyObject::PhyObject(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, id window_id){
   this->position = position;
   this->rotation = fmod(rotation, 360.0f);
   this->size = size;
   this->colour = colour;
   this->time = time;
-  this->window = window;
+  this->window_id = window_id;
 }
 
 
@@ -72,7 +72,7 @@ void PhyObject::update(){
 //------------------------------------------------------------------------------
 void PhyObject::set_position(glm::vec2 pos){
   position = pos;
-  window->set_gobj_position(gobj_id, {pos.x, pos.y, 0.0f});
+  Window::set_gobj_position(window_id, gobj_id, {pos.x, pos.y, 0.0f});
 }
 
 
@@ -80,7 +80,7 @@ void PhyObject::set_position(glm::vec2 pos){
 //------------------------------------------------------------------------------
 void PhyObject::set_rotation(float rot){
   rotation = fmod(rot, 360.0f);
-  window->set_gobj_rotation(gobj_id, rotation);
+  Window::set_gobj_rotation(window_id, gobj_id, rotation);
 }
 
 
@@ -189,8 +189,8 @@ void PhyObject::update_position(){
 // Triangle public
 ////////////////////////////////////////////////////////////////////////////////
 
-PhyTriangle::PhyTriangle(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, std::shared_ptr<Window> window)
-  : PhyObject(position, rotation, size, colour, time, window){
+PhyTriangle::PhyTriangle(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, id window_id)
+  : PhyObject(position, rotation, size, colour, time, window_id){
 
     calc_points();
     init();
@@ -207,7 +207,8 @@ PhyTriangle::~PhyTriangle(){}
 //------------------------------------------------------------------------------
 void PhyTriangle::activate(){
   glm::vec3 pos = {position.x, position.y, 0.0f};
-  gobj_id = window->add_gobject(
+  gobj_id = Window::add_gobject(
+    window_id,
     std::make_shared<GTriangle>(pos, rotation, size, colour)
   );
   
@@ -237,8 +238,8 @@ void PhyTriangle::calc_points(){
 // Rect public
 ////////////////////////////////////////////////////////////////////////////////
 
-PhyRect::PhyRect(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, std::shared_ptr<Window> window)
-  : PhyObject(position, rotation, size, colour, time, window){
+PhyRect::PhyRect(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, id window_id)
+  : PhyObject(position, rotation, size, colour, time, window_id){
 
     calc_points();
     init();
@@ -255,7 +256,8 @@ PhyRect::~PhyRect(){}
 //------------------------------------------------------------------------------
 void PhyRect::activate(){
   glm::vec3 pos = {position.x, position.y, 0.0f};
-  gobj_id = window->add_gobject(
+  gobj_id = Window::add_gobject(
+    window_id,
     std::make_shared<GRect>(pos, rotation, size, colour)
   );
   
@@ -285,8 +287,8 @@ void PhyRect::calc_points(){
 // Circle public
 ////////////////////////////////////////////////////////////////////////////////
 
-PhyCircle::PhyCircle(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, std::shared_ptr<Window> window)
-  : PhyObject(position, rotation, size, colour, time, window){
+PhyCircle::PhyCircle(glm::vec2 position, float rotation, float size, glm::vec3 colour, uint time, id window_id)
+  : PhyObject(position, rotation, size, colour, time, window_id){
 
     calc_points();
     init();
@@ -303,7 +305,8 @@ PhyCircle::~PhyCircle(){}
 //------------------------------------------------------------------------------
 void PhyCircle::activate(){
   glm::vec3 pos = {position.x, position.y, 0.0f};
-  gobj_id = window->add_gobject(
+  gobj_id = Window::add_gobject(
+    window_id,
     std::make_shared<GCircle>(pos, rotation, size, colour)
   );
   

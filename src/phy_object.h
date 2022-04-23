@@ -45,7 +45,7 @@ public:
     float size,
     glm::vec3 colour,
     uint time,
-    std::shared_ptr<Window> window
+    id window_id
   );
   ~PhyObject();
   uint get_time();
@@ -61,7 +61,7 @@ public:
   void apply_force(glm::vec2 force, glm::vec2 position);
   
 protected:
-  std::shared_ptr<Window> window;
+  id window_id;
   id gobj_id;
   uint time;
   bool activated = false;
@@ -100,7 +100,7 @@ public:
     float size,
     glm::vec3 colour,
     uint time,
-    std::shared_ptr<Window> window
+    id window_id
   );
   ~PhyTriangle();
   void activate();
@@ -120,7 +120,7 @@ public:
     float size,
     glm::vec3 colour,
     uint time,
-    std::shared_ptr<Window> window
+    id window_id
   );
   ~PhyRect();
   void activate();
@@ -140,7 +140,7 @@ public:
     float size,
     glm::vec3 colour,
     uint time,
-    std::shared_ptr<Window> window
+    id window_id
   );
   ~PhyCircle();
   void activate();
