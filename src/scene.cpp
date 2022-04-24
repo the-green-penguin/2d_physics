@@ -55,7 +55,7 @@ void Scene::set_name(const std::string& name){
 
 //------------------------------------------------------------------------------
 void Scene::set_background_colour(glm::vec3 colour){
-  Window::set_background_colour(window_id, background_colour);
+  Window::set_background_colour(window_id, colour);
 }
 
 

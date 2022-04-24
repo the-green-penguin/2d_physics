@@ -64,8 +64,8 @@ public:
   void start();
   
 private:
-  std::string name;
-  glm::vec3 background_colour;
+  ///std::string name;
+  ///glm::vec3 background_colour;
   uint time;
   std::unordered_map<
     id, std::shared_ptr<PhyObject>
