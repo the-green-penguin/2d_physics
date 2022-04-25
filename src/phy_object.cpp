@@ -72,7 +72,7 @@ void PhyObject::update(){
 //------------------------------------------------------------------------------
 void PhyObject::set_position(glm::vec2 pos){
   position = pos;
-  Window::set_gobj_position(window_id, gobj_id, {pos.x, pos.y, 0.0f});
+  g_obj->set_position({pos.x, pos.y, 0.0f});
 }
 
 
@@ -80,7 +80,7 @@ void PhyObject::set_position(glm::vec2 pos){
 //------------------------------------------------------------------------------
 void PhyObject::set_rotation(float rot){
   rotation = fmod(rot, 360.0f);
-  Window::set_gobj_rotation(window_id, gobj_id, rotation);
+  g_obj->set_rotation(rotation);
 }
 
 
@@ -194,7 +194,8 @@ PhyTriangle::PhyTriangle(glm::vec2 position, float rotation, float size, glm::ve
 
     calc_points();
     init();
-  
+    glm::vec3 pos = {position.x, position.y, 0.0f};
+    g_obj = std::make_shared<GTriangle>(pos, rotation, size, colour);
 }
 
 
@@ -206,12 +207,7 @@ PhyTriangle::~PhyTriangle(){}
 
 //------------------------------------------------------------------------------
 void PhyTriangle::activate(){
-  glm::vec3 pos = {position.x, position.y, 0.0f};
-  gobj_id = Window::add_gobject(
-    window_id,
-    std::make_shared<GTriangle>(pos, rotation, size, colour)
-  );
-  
+  Window::add_gobject(window_id, g_obj);
   activated = true;
 }
 
@@ -243,7 +239,8 @@ PhyRect::PhyRect(glm::vec2 position, float rotation, float size, glm::vec3 colou
 
     calc_points();
     init();
-  
+    glm::vec3 pos = {position.x, position.y, 0.0f};
+    g_obj = std::make_shared<GRect>(pos, rotation, size, colour);
 }
 
 
@@ -255,12 +252,7 @@ PhyRect::~PhyRect(){}
 
 //------------------------------------------------------------------------------
 void PhyRect::activate(){
-  glm::vec3 pos = {position.x, position.y, 0.0f};
-  gobj_id = Window::add_gobject(
-    window_id,
-    std::make_shared<GRect>(pos, rotation, size, colour)
-  );
-  
+  Window::add_gobject(window_id, g_obj);
   activated = true;
 }
 
@@ -292,7 +284,8 @@ PhyCircle::PhyCircle(glm::vec2 position, float rotation, float size, glm::vec3 c
 
     calc_points();
     init();
-  
+    glm::vec3 pos = {position.x, position.y, 0.0f};
+    g_obj = std::make_shared<GCircle>(pos, rotation, size, colour);
 }
 
 
@@ -304,12 +297,7 @@ PhyCircle::~PhyCircle(){}
 
 //------------------------------------------------------------------------------
 void PhyCircle::activate(){
-  glm::vec3 pos = {position.x, position.y, 0.0f};
-  gobj_id = Window::add_gobject(
-    window_id,
-    std::make_shared<GCircle>(pos, rotation, size, colour)
-  );
-  
+  Window::add_gobject(window_id, g_obj);
   activated = true;
 }
 
