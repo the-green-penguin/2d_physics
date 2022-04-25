@@ -27,7 +27,7 @@ SOFTWARE.
 #pragma once
 
 #include <vector>
-#include <unordered_map>
+#include <queue>
 #include <string>
 #include <memory>
 
@@ -64,16 +64,20 @@ public:
   void start();
   
 private:
-  ///std::string name;
-  ///glm::vec3 background_colour;
   uint time;
-  std::unordered_map<
-    id, std::shared_ptr<PhyObject>
-  > phy_objects_wait;
-  id next_id = 0;
   std::vector< std::shared_ptr<PhyObject> > phy_objects;
   id window_id;
   uint ticks_passed = 0;
+  
+  // this mess is a priority_queue with phy_objects to be activated next on top
+  static bool compare_time(std::shared_ptr< PhyObject > phy_0, std::shared_ptr< PhyObject > phy_1){
+    return phy_0->get_time() > phy_1->get_time();   // object with biggest time value should end up on top
+  }
+  std::priority_queue<
+    std::shared_ptr< PhyObject >,
+    std::vector< std::shared_ptr< PhyObject > >,
+    decltype(&compare_time)
+  > phy_objects_wait{compare_time};
   
   void run();
   void loop_timer();
@@ -81,6 +85,7 @@ private:
     void loop_tick();
       void check_activate_objects();
         void activate_object(id obj_id);
+        void remove_active_objects();
       void update_objects();
         void handle_collisions();
 };

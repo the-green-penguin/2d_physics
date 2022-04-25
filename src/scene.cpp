@@ -78,7 +78,7 @@ void Scene::add_object(glm::vec2 pos, float rot, float size, glm::vec3 colour, u
     default: throw std::runtime_error("Invalid Phy_Object type");
   }
   
-  this->phy_objects_wait.insert({next_id++, obj});
+  this->phy_objects_wait.push(obj);
 }
 
 
@@ -163,19 +163,19 @@ void Scene::loop_tick(){
 
 //------------------------------------------------------------------------------
 void Scene::check_activate_objects(){
-  for(auto &o : phy_objects_wait){
-    if(o.second->get_time() <= ticks_passed && ! o.second->is_active())
-      activate_object(o.first);
+  for( ; ! phy_objects_wait.empty(); phy_objects_wait.pop()){
+    auto obj = phy_objects_wait.top();
+    
+    // activate
+    if( obj->get_time() <= ticks_passed ){
+      obj->activate();
+      phy_objects.push_back(obj);
+    }
+    
+    // skip and wait
+    else
+      break;
   }
-}
-
-
-
-//------------------------------------------------------------------------------
-void Scene::activate_object(id obj_id){  
-  phy_objects_wait.at(obj_id)->activate();
-  phy_objects.push_back( phy_objects_wait.at(obj_id) );
-  phy_objects_wait.erase(obj_id);
 }
 
 
