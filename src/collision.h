@@ -46,8 +46,8 @@ public:
   
 protected:
   struct edge{
-    glm::vec2 point_0;
-    glm::vec2 point_1;
+    glm::vec2 p_0;
+    glm::vec2 p_1;
   };
   struct projection{
     float min;
@@ -59,8 +59,12 @@ protected:
   std::shared_ptr< PhyObject > phy_obj_1;
   std::vector< glm::vec2 > points_0;
   std::vector< glm::vec2 > points_1;
+  std::vector< glm::vec2 > surface_points_0;
+  std::vector< glm::vec2 > surface_points_1;
   glm::vec2 center_0;
   glm::vec2 center_1;
+  glm::vec2 force_impact_point_0;
+  glm::vec2 force_impact_point_1;
   std::vector< edge > edges;
   
   void get_edges();
@@ -73,4 +77,6 @@ protected:
   );
   bool check_proj_overlap(projection proj_0, projection proj_1);
   glm::vec2 perpendicular(glm::vec2 vec);
+  void get_surface_points();
+  void calc_force_impact_points();
 };

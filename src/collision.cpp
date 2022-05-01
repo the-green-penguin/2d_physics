@@ -55,8 +55,10 @@ bool Collision::has_contact(){  return contact;  }
 void Collision::handle(){
   if( ! contact) return;   // skip if there is no contact
   
-  glm::vec2 center_vec = center_0 - center_1;
-  std::cout << center_vec.x << " " << center_vec.y << "\n";
+  get_surface_points();
+  calc_force_impact_points();
+  std::cout << force_impact_point_0.x << " " << force_impact_point_0.y << "\n";
+  std::cout << force_impact_point_1.x << " " << force_impact_point_1.y << "\n\n";
 }
 
 
@@ -115,7 +117,7 @@ bool Collision::check_contact_detailed(){
   bool overlap;
   
   for(auto &e : edges){
-    glm::vec2 edge_vector = e.point_0 - e.point_1;
+    glm::vec2 edge_vector = e.p_0 - e.p_1;
     glm::vec2 axis = perpendicular(edge_vector);
     overlap = check_proj_overlap(
       project_polygon(axis, points_0),
@@ -168,4 +170,49 @@ bool Collision::check_proj_overlap(Collision::projection proj_0, Collision::proj
 //------------------------------------------------------------------------------
 glm::vec2 Collision::perpendicular(glm::vec2 vec){
   return glm::normalize( glm::vec2( - vec.y, vec.x) );
+}
+
+
+
+//------------------------------------------------------------------------------
+void Collision::get_surface_points(){
+  // polygon 0
+  glm::vec2 prev_point = points_0.back();
+  for(auto &p : points_0){
+    surface_points_0.push_back( p );
+    surface_points_0.push_back( (prev_point + p) * 0.5f );
+    prev_point = p;
+  }
+  
+  // polygon 1
+  prev_point = points_1.back();
+  for(auto &p : points_1){
+    surface_points_1.push_back( p );
+    surface_points_1.push_back( (prev_point + p) * 0.5f );
+    prev_point = p;
+  }
+}
+
+
+
+//------------------------------------------------------------------------------
+void Collision::calc_force_impact_points(){
+  float distance = glm::distance(center_0, center_1);
+  force_impact_point_0 = force_impact_point_1 = {0.0f, 0.0f};
+  
+  // polygon 0
+  for(auto &p : surface_points_0){
+    float impact_contribution = (glm::distance(p, center_1) - distance) / distance;
+    if(impact_contribution > 0)
+      force_impact_point_0 += impact_contribution * p;
+  }
+  force_impact_point_0 *= 1.0f / surface_points_0.size();
+  
+  // polygon 1
+  for(auto &p : surface_points_1){
+    float impact_contribution = (glm::distance(p, center_0) - distance) / distance;
+    if(impact_contribution > 0)
+      force_impact_point_1 += impact_contribution * p;
+  }
+  force_impact_point_1 *= 1.0f / surface_points_1.size();
 }
