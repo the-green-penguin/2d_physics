@@ -74,9 +74,9 @@ private:
     return phy_0->get_time() > phy_1->get_time();   // object with biggest time value should end up on top
   }
   std::priority_queue<
-    std::shared_ptr< PhyObject >,
-    std::vector< std::shared_ptr< PhyObject > >,
-    decltype(&compare_time)
+    std::shared_ptr< PhyObject >,   // objec type
+    std::vector< std::shared_ptr< PhyObject > >,   // container type
+    decltype(&compare_time)   // comparison function
   > phy_objects_wait{compare_time};
   
   void run();

@@ -62,7 +62,7 @@ public:
   
 protected:
   id window_id;
-  std::shared_ptr< GShape > g_obj;
+  id gobj_id;
   uint time;
   bool activated = false;
   
