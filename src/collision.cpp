@@ -34,8 +34,6 @@ SOFTWARE.
 Collision::Collision(std::shared_ptr< PhyObject > phy_obj_0, std::shared_ptr< PhyObject > phy_obj_1){
   this->phy_obj_0 = phy_obj_0;
   this->phy_obj_1 = phy_obj_1;
-  get_points();
-  get_edges();
   contact = check_contact();
 }
 
@@ -55,10 +53,8 @@ bool Collision::has_contact(){  return contact;  }
 void Collision::handle(){
   if( ! contact) return;   // skip if there is no contact
   
-  get_surface_points();
-  calc_force_impact_points();
-  std::cout << force_impact_point_0.x << " " << force_impact_point_0.y << "\n";
-  std::cout << force_impact_point_1.x << " " << force_impact_point_1.y << "\n\n";
+  approximate_coll_point();
+  std::cout << coll_point.x << " " << coll_point.y << "\n";
 }
 
 
@@ -99,6 +95,9 @@ void Collision::get_edges(){
 
 //------------------------------------------------------------------------------
 bool Collision::check_contact(){
+  get_points();
+  get_edges();
+  
   // approximate (big distance -> no collision)
   float max_distance = phy_obj_0->get_size() + phy_obj_1->get_size();
   float distance = glm::distance(center_0, center_1);
@@ -196,23 +195,28 @@ void Collision::get_surface_points(){
 
 
 //------------------------------------------------------------------------------
-void Collision::calc_force_impact_points(){
+void Collision::approximate_coll_point(){
+  get_surface_points();
   float distance = glm::distance(center_0, center_1);
-  force_impact_point_0 = force_impact_point_1 = {0.0f, 0.0f};
   
-  // polygon 0
+  // approximate collision point inside polygon 0
+  glm::vec2 approx_p0 = {0.0f, 0.0f};
   for(auto &p : surface_points_0){
     float impact_contribution = (glm::distance(p, center_1) - distance) / distance;
     if(impact_contribution > 0)
-      force_impact_point_0 += impact_contribution * p;
+      approx_p0 += impact_contribution * p;
   }
-  force_impact_point_0 *= 1.0f / surface_points_0.size();
+  approx_p0 *= 1.0f / surface_points_0.size();
   
-  // polygon 1
+  // approximate collision point inside polygon 1
+  glm::vec2 approx_p1 = {0.0f, 0.0f};
   for(auto &p : surface_points_1){
     float impact_contribution = (glm::distance(p, center_0) - distance) / distance;
     if(impact_contribution > 0)
-      force_impact_point_1 += impact_contribution * p;
+      approx_p1 += impact_contribution * p;
   }
-  force_impact_point_1 *= 1.0f / surface_points_1.size();
+  approx_p1 *= 1.0f / surface_points_1.size();
+  
+  // result
+  coll_point = (approx_p0 + approx_p1) * 0.5f;
 }

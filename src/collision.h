@@ -63,8 +63,7 @@ protected:
   std::vector< glm::vec2 > surface_points_1;
   glm::vec2 center_0;
   glm::vec2 center_1;
-  glm::vec2 force_impact_point_0;
-  glm::vec2 force_impact_point_1;
+  glm::vec2 coll_point;
   std::vector< edge > edges;
   
   void get_edges();
@@ -78,5 +77,5 @@ protected:
   bool check_proj_overlap(projection proj_0, projection proj_1);
   glm::vec2 perpendicular(glm::vec2 vec);
   void get_surface_points();
-  void calc_force_impact_points();
+  void approximate_coll_point();
 };

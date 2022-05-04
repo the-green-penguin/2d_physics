@@ -154,8 +154,10 @@ void Scene::loop_tick(){
   ticks_passed++;
   
   // test
-  if(phy_objects.size() > 1){
-    phy_objects[0]->apply_force({100.0f, 0.0f}, {1.0f, 1.0f});
+  static bool force_applied = false;
+  if(phy_objects.size() > 1 && ! force_applied){
+    phy_objects[0]->apply_force({10000.0f, 0.0f}, {1.0f, 1.0f});
+    force_applied = true;
   }
 }
 
