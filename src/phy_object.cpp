@@ -126,6 +126,26 @@ std::vector< glm::vec2 > PhyObject::get_points(){
 
 
 //------------------------------------------------------------------------------
+glm::vec2 PhyObject::get_velocity(){  return velocity;  }
+
+
+
+//------------------------------------------------------------------------------
+float PhyObject::get_angular_velocity(){  return angular_velocity;  }
+
+
+
+//------------------------------------------------------------------------------
+float PhyObject::get_bounciness(){  return bounciness;  }
+
+
+
+//------------------------------------------------------------------------------
+float PhyObject::get_mass(){  return mass;  }
+
+
+
+//------------------------------------------------------------------------------
 void PhyObject::apply_force(glm::vec2 force, glm::vec2 pos){
   torque = force.x * pos.y - force.y * pos.x;   // cross product
 }

@@ -58,6 +58,10 @@ public:
   float get_rotation();
   float get_size();
   std::vector< glm::vec2 > get_points();   // compiler should optimise 'return by value' for std types
+  glm::vec2 get_velocity();
+  float get_angular_velocity();
+  float get_bounciness();
+  float get_mass();
   void apply_force(glm::vec2 force, glm::vec2 position);
   
 protected:

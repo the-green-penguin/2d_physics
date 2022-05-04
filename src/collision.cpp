@@ -54,7 +54,8 @@ void Collision::handle(){
   if( ! contact) return;   // skip if there is no contact
   
   approximate_coll_point();
-  std::cout << coll_point.x << " " << coll_point.y << "\n";
+  ///std::cout << coll_point.x << " " << coll_point.y << "\n";
+  apply_impulse();
 }
 
 
@@ -219,4 +220,57 @@ void Collision::approximate_coll_point(){
   
   // result
   coll_point = (approx_p0 + approx_p1) * 0.5f;
+}
+
+
+
+//------------------------------------------------------------------------------
+void Collision::apply_impulse(){
+  calc_impulse();
+}
+
+
+
+//------------------------------------------------------------------------------
+void Collision::calc_impulse(){
+  glm::vec2 rel_velocity = calc_velocity_at_coll_point();
+  float mass_impact = 1.0f / phy_obj_0->get_mass() + 1.0f / phy_obj_1->get_mass();
+  float bounciness = ( phy_obj_0->get_bounciness() + phy_obj_1->get_bounciness() ) / 2;
+  glm::vec2 coll_normal = glm::normalize( rel_velocity );
+  
+  ///std::cout << coll_point.x << " " << coll_point.y << "\n";
+  ///std::cout << coll_normal.x << " " << coll_normal.y << "\n";
+}
+
+
+
+//------------------------------------------------------------------------------
+glm::vec2 Collision::calc_velocity_at_coll_point(){
+  get_velocities();
+  
+  // polygon 0
+  glm::vec3 rel_coll_point_0 = {coll_point - center_0, 0.0f};
+  glm::vec3 rel_velocity_0 =
+    glm::vec3(velocity_0, 0.0f)
+    + glm::cross( {0.0f, 0.0f, ang_velocity_0}, rel_coll_point_0 );
+  
+  // polygon 1
+  glm::vec3 rel_coll_point_1 = {coll_point - center_1, 0.0f};
+  glm::vec3 rel_velocity_1 =
+    glm::vec3(velocity_1, 0.0f)
+    + glm::cross( {0.0f, 0.0f, ang_velocity_1}, rel_coll_point_1 );
+    
+  // result
+  glm::vec3 rel_vel = rel_velocity_0 - rel_velocity_1;
+  return { rel_vel.x, rel_vel.y };
+}
+
+
+
+//------------------------------------------------------------------------------
+void Collision::get_velocities(){
+  velocity_0 = phy_obj_0->get_velocity();
+  velocity_1 = phy_obj_1->get_velocity();
+  ang_velocity_0 = phy_obj_0->get_angular_velocity();
+  ang_velocity_1 = phy_obj_1->get_angular_velocity();
 }

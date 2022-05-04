@@ -63,6 +63,12 @@ protected:
   std::vector< glm::vec2 > surface_points_1;
   glm::vec2 center_0;
   glm::vec2 center_1;
+  glm::vec2 velocity_0;
+  glm::vec2 velocity_1;
+  float ang_velocity_0;
+  float ang_velocity_1;
+  float impulse_0;
+  float impulse_1;
   glm::vec2 coll_point;
   std::vector< edge > edges;
   
@@ -78,4 +84,8 @@ protected:
   glm::vec2 perpendicular(glm::vec2 vec);
   void get_surface_points();
   void approximate_coll_point();
+  void apply_impulse();
+  void calc_impulse();
+  glm::vec2 calc_velocity_at_coll_point();
+  void get_velocities();
 };
