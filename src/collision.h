@@ -55,25 +55,10 @@ protected:
   };
   
   bool contact = false;
+  glm::vec2 coll_point;
   std::shared_ptr< PhyObject > phy_obj_0;
   std::shared_ptr< PhyObject > phy_obj_1;
-  std::vector< glm::vec2 > points_0;
-  std::vector< glm::vec2 > points_1;
-  std::vector< glm::vec2 > surface_points_0;
-  std::vector< glm::vec2 > surface_points_1;
-  glm::vec2 center_0;
-  glm::vec2 center_1;
-  glm::vec2 velocity_0;
-  glm::vec2 velocity_1;
-  float ang_velocity_0;
-  float ang_velocity_1;
-  float impulse_0;
-  float impulse_1;
-  glm::vec2 coll_point;
-  std::vector< edge > edges;
   
-  void get_edges();
-  void get_points();
   bool check_contact();
   bool check_contact_detailed();
   projection project_polygon(
@@ -82,10 +67,8 @@ protected:
   );
   bool check_proj_overlap(projection proj_0, projection proj_1);
   glm::vec2 perpendicular(glm::vec2 vec);
-  void get_surface_points();
-  void approximate_coll_point();
-  void apply_impulse();
-  void calc_impulse();
-  glm::vec2 calc_velocity_at_coll_point();
-  void get_velocities();
+  std::vector< glm::vec2 > fetch_points_world_space(std::shared_ptr< PhyObject > phy_obj);   // does the compiler really optimise return by value for std types?
+  std::vector< edge > fetch_edges(std::vector< glm::vec2 > points_0, std::vector< glm::vec2 > points_1);   // does the compiler really optimise return by value for std types?
+  void to_world_space(std::vector< glm::vec2 >& points, glm::vec2 offset, float rotation);
+  void to_object_space(std::vector< glm::vec2 >& points, glm::vec2 offset, float rotation);
 };

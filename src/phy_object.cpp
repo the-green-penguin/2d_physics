@@ -101,27 +101,7 @@ float PhyObject::get_size(){  return size;  }
 
 
 //------------------------------------------------------------------------------
-std::vector< glm::vec2 > PhyObject::get_points(){
-  // adjust to rotation
-  std::vector< glm::vec2 > ret = points;
-  float sine = sin( glm::radians(rotation) );
-  float cosine = cos( glm::radians(rotation) );
-  
-  for(auto &p : ret){
-    float x = p.x * cosine - p.y * sine;
-    float y = p.x * sine + p.y * cosine;
-    p.x = x;
-    p.y = y;
-  }
-  
-  // adjust to world position
-  for(auto &p : ret){
-    p.x += position.x;
-    p.y += position.y;
-  }
-  
-  return ret;
-}
+std::vector< glm::vec2 > PhyObject::get_points(){  return points;  }
 
 
 

@@ -53,9 +53,9 @@ bool Collision::has_contact(){  return contact;  }
 void Collision::handle(){
   if( ! contact) return;   // skip if there is no contact
   
-  approximate_coll_point();
-  ///std::cout << coll_point.x << " " << coll_point.y << "\n";
-  apply_impulse();
+  std::cout << "!" << std::flush;
+  
+  
 }
 
 
@@ -64,44 +64,10 @@ void Collision::handle(){
 // private
 ////////////////////////////////////////////////////////////////////////////////
 
-void Collision::get_points(){
-  points_0 = phy_obj_0->get_points();
-  points_1 = phy_obj_1->get_points();
-  center_0 = phy_obj_0->get_position();
-  center_1 = phy_obj_1->get_position();
-}
-
-
-
-//------------------------------------------------------------------------------
-void Collision::get_edges(){
-  // polygon 0
-  glm::vec2 prev_point = points_0.back();
-  
-  for(auto &p : points_0){
-    edges.push_back( {prev_point, p} );
-    prev_point = p;
-  }
-  
-  // polygon 1
-  prev_point = points_1.back();
-  
-  for(auto &p : points_1){
-    edges.push_back( {prev_point, p} );
-    prev_point = p;
-  }
-}
-
-
-
-//------------------------------------------------------------------------------
-bool Collision::check_contact(){
-  get_points();
-  get_edges();
-  
+bool Collision::check_contact(){  
   // approximate (big distance -> no collision)
   float max_distance = phy_obj_0->get_size() + phy_obj_1->get_size();
-  float distance = glm::distance(center_0, center_1);
+  float distance = glm::distance(phy_obj_0->get_position(), phy_obj_0->get_position());
   
   if(distance > max_distance)
     return false;
@@ -114,8 +80,11 @@ bool Collision::check_contact(){
 
 //------------------------------------------------------------------------------
 bool Collision::check_contact_detailed(){
-  bool overlap;
+  auto points_0 = fetch_points_world_space(phy_obj_0);
+  auto points_1 = fetch_points_world_space(phy_obj_1);
+  auto edges = fetch_edges(points_0, points_1);
   
+  bool overlap;
   for(auto &e : edges){
     glm::vec2 edge_vector = e.p_0 - e.p_1;
     glm::vec2 axis = perpendicular(edge_vector);
@@ -175,102 +144,82 @@ glm::vec2 Collision::perpendicular(glm::vec2 vec){
 
 
 //------------------------------------------------------------------------------
-void Collision::get_surface_points(){
+std::vector< glm::vec2 > Collision::fetch_points_world_space(std::shared_ptr< PhyObject > phy_obj){
+  auto points = phy_obj->get_points();
+  glm::vec2 offset = phy_obj->get_position();
+  float rotation = phy_obj->get_rotation();
+  
+  to_world_space(points, offset, rotation);
+  return points;
+}
+
+
+
+//------------------------------------------------------------------------------
+std::vector< Collision::edge > Collision::fetch_edges(std::vector< glm::vec2 > points_0, std::vector< glm::vec2 > points_1){
+  std::vector< edge > ret;
+  
   // polygon 0
   glm::vec2 prev_point = points_0.back();
+  
   for(auto &p : points_0){
-    surface_points_0.push_back( p );
-    surface_points_0.push_back( (prev_point + p) * 0.5f );
+    ret.push_back( {prev_point, p} );
     prev_point = p;
   }
   
   // polygon 1
   prev_point = points_1.back();
+  
   for(auto &p : points_1){
-    surface_points_1.push_back( p );
-    surface_points_1.push_back( (prev_point + p) * 0.5f );
+    ret.push_back( {prev_point, p} );
     prev_point = p;
   }
+  
+  return ret;
 }
 
 
 
 //------------------------------------------------------------------------------
-void Collision::approximate_coll_point(){
-  get_surface_points();
-  float distance = glm::distance(center_0, center_1);
+void Collision::to_world_space(std::vector< glm::vec2 >& points, glm::vec2 offset, float rotation){
+  // adjust to rotation
+  float sine = sin( glm::radians(rotation) );
+  float cosine = cos( glm::radians(rotation) );
   
-  // approximate collision point inside polygon 0
-  glm::vec2 approx_p0 = {0.0f, 0.0f};
-  for(auto &p : surface_points_0){
-    float impact_contribution = (glm::distance(p, center_1) - distance) / distance;
-    if(impact_contribution > 0)
-      approx_p0 += impact_contribution * p;
+  for(auto &p : points){
+    float x = p.x * cosine - p.y * sine;
+    float y = p.x * sine + p.y * cosine;
+    p.x = x;
+    p.y = y;
   }
-  approx_p0 *= 1.0f / surface_points_0.size();
   
-  // approximate collision point inside polygon 1
-  glm::vec2 approx_p1 = {0.0f, 0.0f};
-  for(auto &p : surface_points_1){
-    float impact_contribution = (glm::distance(p, center_0) - distance) / distance;
-    if(impact_contribution > 0)
-      approx_p1 += impact_contribution * p;
+  // adjust to world position
+  for(auto &p : points){
+    p.x += offset.x;
+    p.y += offset.y;
   }
-  approx_p1 *= 1.0f / surface_points_1.size();
-  
-  // result
-  coll_point = (approx_p0 + approx_p1) * 0.5f;
 }
 
 
 
 //------------------------------------------------------------------------------
-void Collision::apply_impulse(){
-  calc_impulse();
-}
-
-
-
-//------------------------------------------------------------------------------
-void Collision::calc_impulse(){
-  glm::vec2 rel_velocity = calc_velocity_at_coll_point();
-  float mass_impact = 1.0f / phy_obj_0->get_mass() + 1.0f / phy_obj_1->get_mass();
-  float bounciness = ( phy_obj_0->get_bounciness() + phy_obj_1->get_bounciness() ) / 2;
-  glm::vec2 coll_normal = glm::normalize( rel_velocity );
+void Collision::to_object_space(std::vector< glm::vec2 >& points, glm::vec2 offset, float rotation){
+  // adjust to relative position
+  for(auto &p : points){
+    p.x -= offset.x;
+    p.y -= offset.y;
+  }
   
-  ///std::cout << coll_point.x << " " << coll_point.y << "\n";
-  ///std::cout << coll_normal.x << " " << coll_normal.y << "\n";
-}
-
-
-
-//------------------------------------------------------------------------------
-glm::vec2 Collision::calc_velocity_at_coll_point(){
-  get_velocities();
+  // undo rotation
+  float sine = sin( glm::radians(rotation) );
+  float cosine = cos( glm::radians(rotation) );
   
-  // polygon 0
-  glm::vec3 rel_coll_point_0 = {coll_point - center_0, 0.0f};
-  glm::vec3 rel_velocity_0 =
-    glm::vec3(velocity_0, 0.0f)
-    + glm::cross( {0.0f, 0.0f, ang_velocity_0}, rel_coll_point_0 );
-  
-  // polygon 1
-  glm::vec3 rel_coll_point_1 = {coll_point - center_1, 0.0f};
-  glm::vec3 rel_velocity_1 =
-    glm::vec3(velocity_1, 0.0f)
-    + glm::cross( {0.0f, 0.0f, ang_velocity_1}, rel_coll_point_1 );
-    
-  // result
-  glm::vec3 rel_vel = rel_velocity_0 - rel_velocity_1;
-  return { rel_vel.x, rel_vel.y };
+  for(auto &p : points){
+    float x = p.x * cosine + p.y * sine;
+    float y = -(p.x * sine) + p.y * cosine;
+    p.x = x;
+    p.y = y;
+  }
 }
 
 
-
-//------------------------------------------------------------------------------
-void Collision::get_velocities(){
-  velocity_0 = phy_obj_0->get_velocity();
-  velocity_1 = phy_obj_1->get_velocity();
-  ang_velocity_0 = phy_obj_0->get_angular_velocity();
-  ang_velocity_1 = phy_obj_1->get_angular_velocity();
-}
