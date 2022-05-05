@@ -1,13 +1,13 @@
 {
   "scene": "Test",
   "background": [0.0f, 0.0f, 0.0f],
-  "time": 500,
+  "time": 1000,
   
   "objects":
     [
       "triangle":
         {
-          "position": [125.0f, 1070.0f],
+          "position": [125.0f, 170.0f],
           "rotation": 0.0f,
           "size": 50.0f,
           "color": [1.0f, 0.0f, 0.0f],
@@ -16,7 +16,7 @@
         
       "rectangle":
         {
-          "position": [75.0f, 1070.0f],
+          "position": [75.0f, 170.0f],
           "rotation": 0.0f,
           "size": 50.0f,
           "color": [0.0f, 1.0f, 0.0f],

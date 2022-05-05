@@ -40,6 +40,11 @@ public:
     std::shared_ptr< PhyObject > phy_obj_0,
     std::shared_ptr< PhyObject > phy_obj_1
   );
+  Collision(
+    std::shared_ptr< PhyObject > phy_obj_0,
+    std::shared_ptr< PhyObject > phy_obj_1,
+    id window_id
+  );
   ~Collision();
   bool has_contact();
   void handle();
@@ -55,9 +60,11 @@ protected:
   };
   
   bool contact = false;
-  glm::vec2 coll_point;
   std::shared_ptr< PhyObject > phy_obj_0;
   std::shared_ptr< PhyObject > phy_obj_1;
+  bool visible = false;
+  id window_id;
+  id collision_marker;
   
   bool check_contact();
   bool check_contact_detailed();
@@ -67,8 +74,48 @@ protected:
   );
   bool check_proj_overlap(projection proj_0, projection proj_1);
   glm::vec2 perpendicular(glm::vec2 vec);
-  std::vector< glm::vec2 > fetch_points_world_space(std::shared_ptr< PhyObject > phy_obj);   // does the compiler really optimise return by value for std types?
-  std::vector< edge > fetch_edges(std::vector< glm::vec2 > points_0, std::vector< glm::vec2 > points_1);   // does the compiler really optimise return by value for std types?
-  void to_world_space(std::vector< glm::vec2 >& points, glm::vec2 offset, float rotation);
-  void to_object_space(std::vector< glm::vec2 >& points, glm::vec2 offset, float rotation);
+  void apply_impulse();
+  void calc_impulse();
+  glm::vec2 approximate_coll_point(
+    const std::vector< glm::vec2 >& points_0,
+    const std::vector< glm::vec2 >& points_1
+  );
+  glm::vec2 approx_rel_coll_point(
+    const std::vector< glm::vec2 >& surface_points,
+    glm::vec2 opposite_center
+  );
+  glm::vec2 refine_nearest_point(
+    glm::vec2 curr_point,
+    glm::vec2 neighbour_0,
+    glm::vec2 neighbour_1,
+    glm::vec2 target,
+    int max_depth
+  );
+  std::vector< glm::vec2 > fetch_points_world_space(   // does the compiler really optimise return by value for std types?
+    std::shared_ptr< PhyObject > phy_obj
+  );
+  std::vector< edge > fetch_edges(   // does the compiler really optimise return by value for std types?
+    const std::vector< glm::vec2 >& points_0,
+    const std::vector< glm::vec2 >& points_1
+  );
+  void to_world_space(
+    std::vector< glm::vec2 >& points,
+    glm::vec2 offset,
+    float rotation
+  );
+  void to_world_space(
+    glm::vec2& point,
+    glm::vec2 offset,
+    float rotation
+  );
+  void to_object_space(
+    std::vector< glm::vec2 >& points,
+    glm::vec2 offset,
+    float rotation
+  );
+  void to_object_space(
+    glm::vec2& point,
+    glm::vec2 offset,
+    float rotation
+  );
 };
