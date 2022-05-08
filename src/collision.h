@@ -65,6 +65,13 @@ protected:
   bool visible = false;
   id window_id;
   id collision_marker;
+  glm::vec2 ref_pos;
+  float ref_rot;
+  glm::vec2 coll_point;
+  glm::vec2 rel_coll_point_0;
+  glm::vec2 rel_coll_point_1;
+  glm::vec2 coll_normal;
+  glm::vec2 impact_velocity;
   
   bool check_contact();
   bool check_contact_detailed();
@@ -75,7 +82,8 @@ protected:
   bool check_proj_overlap(projection proj_0, projection proj_1);
   glm::vec2 perpendicular(glm::vec2 vec);
   void apply_impulse();
-  void calc_impulse();
+  float calc_impulse();
+  void fetch_collision_variables();
   glm::vec2 approximate_coll_point(
     const std::vector< glm::vec2 >& points_0,
     const std::vector< glm::vec2 >& points_1
@@ -91,6 +99,7 @@ protected:
     glm::vec2 target,
     int max_depth
   );
+  glm::vec2 calc_impact_velocity();
   std::vector< glm::vec2 > fetch_points_world_space(   // does the compiler really optimise return by value for std types?
     std::shared_ptr< PhyObject > phy_obj
   );
@@ -98,24 +107,25 @@ protected:
     const std::vector< glm::vec2 >& points_0,
     const std::vector< glm::vec2 >& points_1
   );
-  void to_world_space(
+  static void to_world_space(
     std::vector< glm::vec2 >& points,
     glm::vec2 offset,
     float rotation
   );
-  void to_world_space(
+  static void to_world_space(
     glm::vec2& point,
     glm::vec2 offset,
     float rotation
   );
-  void to_object_space(
+  static void to_object_space(
     std::vector< glm::vec2 >& points,
     glm::vec2 offset,
     float rotation
   );
-  void to_object_space(
+  static void to_object_space(
     glm::vec2& point,
     glm::vec2 offset,
     float rotation
   );
+  static float cross_2d(glm::vec2 v_0, glm::vec2 v_1);
 };

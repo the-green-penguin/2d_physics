@@ -126,8 +126,26 @@ float PhyObject::get_mass(){  return mass;  }
 
 
 //------------------------------------------------------------------------------
+float PhyObject::get_inertia_tensor(){  return inertia_tensor;  }
+
+
+
+//------------------------------------------------------------------------------
 void PhyObject::apply_force(glm::vec2 force, glm::vec2 pos){
-  torque = force.x * pos.y - force.y * pos.x;   // cross product
+  torque = cross_2d(force, pos);
+}
+
+
+
+//------------------------------------------------------------------------------
+void PhyObject::apply_impulse(float impulse, glm::vec2 rel_coll_point, glm::vec2 coll_normal){
+  // linear velocity
+  velocity += impulse * coll_normal * (1.0f / mass);
+  
+  // angular velocity
+  angular_velocity += cross_2d(rel_coll_point, impulse * coll_normal)  * (1.0f / inertia_tensor);
+  
+  std::cout << impulse << "\n";
 }
 
 
@@ -145,11 +163,11 @@ void PhyObject::init(){
 
 //------------------------------------------------------------------------------
 void PhyObject::calc_inertia_tensor(){
-  intertia_tensor = 0.0f;
+  inertia_tensor = 0.0f;
   float p_mass = mass / points.size();   // assume even mass distribution in rigidbodies
   
   for(auto &p : points)
-    intertia_tensor += p_mass * glm::dot(p, p);
+    inertia_tensor += p_mass * glm::dot(p, p);
 }
 
 
@@ -171,7 +189,7 @@ void PhyObject::calc_center_of_mass(){
 void PhyObject::update_rotation(){
   set_rotation(rotation + step_time * angular_velocity);   // update phy & graphics
   
-  float change = adjustment_const * (torque / intertia_tensor);
+  float change = adjustment_const * (torque / inertia_tensor);
   angular_velocity = angular_velocity + (step_time * change);
   torque = 0.0f;
 }
@@ -181,6 +199,13 @@ void PhyObject::update_rotation(){
 //------------------------------------------------------------------------------
 void PhyObject::update_position(){
   
+}
+
+
+
+//------------------------------------------------------------------------------
+float PhyObject::cross_2d(glm::vec2 v_0, glm::vec2 v_1){
+  return v_0.x * v_1.y - v_0.y - v_1.x;
 }
 
 

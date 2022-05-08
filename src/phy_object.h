@@ -62,7 +62,9 @@ public:
   float get_angular_velocity();
   float get_bounciness();
   float get_mass();
+  float get_inertia_tensor();
   void apply_force(glm::vec2 force, glm::vec2 position);
+  void apply_impulse(float impulse, glm::vec2 rel_coll_point, glm::vec2 coll_normal);
   
 protected:
   id window_id;
@@ -76,7 +78,7 @@ protected:
   glm::vec3 colour;
   std::vector< glm::vec2 > points;   // order of ponits matter!
   glm::vec2 center_of_mass = {0.0f, 0.0f};
-  float intertia_tensor = 0.0f;
+  float inertia_tensor = 0.0f;
   float angular_velocity = 0.0f;
   float torque = 0.0f;
   float step_time = 1.0f / 100.0f;   // duration of tick in seconds
@@ -91,6 +93,7 @@ protected:
   void calc_inertia_tensor();
   void update_rotation();
   void update_position();
+  static float cross_2d(glm::vec2 v_0, glm::vec2 v_1);
 };
 
 

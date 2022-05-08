@@ -67,7 +67,11 @@ bool Collision::has_contact(){  return contact;  }
 void Collision::handle(){
   if( ! contact) return;   // skip if there is no contact
 
-  apply_impulse();
+  std::cout << "!!!\n";
+
+  ///ref_pos = phy_obj_0->get_position();
+  ///ref_rot = phy_obj_0->get_rotation();
+  ///apply_impulse();
 }
 
 
@@ -157,25 +161,83 @@ glm::vec2 Collision::perpendicular(glm::vec2 vec){
 
 //------------------------------------------------------------------------------
 void Collision::apply_impulse(){
-  calc_impulse();
+  float impulse = calc_impulse();
+  phy_obj_0->apply_impulse(impulse, rel_coll_point_0, coll_normal);
+  phy_obj_0->apply_impulse( - impulse, rel_coll_point_1, coll_normal);
 }
 
 
 
 //------------------------------------------------------------------------------
-void Collision::calc_impulse(){
+float Collision::calc_impulse(){
+  fetch_collision_variables();
+  float bounciness = ( phy_obj_0->get_bounciness() + phy_obj_0->get_bounciness() ) / 2;
+  
+  // formular:
+  //                                - ( 1 + c ) * dot(v_rel, n)
+  // __________________________________________________________________________________
+  // (1 / m_a) + (1 / m_b) + ( (cross(x_a, n))^2 ) / I_a + ( (cross(x_b, n))^2 ) / I_b
+  //
+  
+  float numerator = -( 1.0f + bounciness ) * glm::dot(impact_velocity, coll_normal);
+  float denominator = (1.0f / phy_obj_0->get_mass());
+  
+  denominator += (1.0f / phy_obj_1->get_mass());
+  
+  float tmp = cross_2d(rel_coll_point_0, coll_normal);
+  tmp *= tmp;
+  tmp /= phy_obj_0->get_inertia_tensor();
+  
+  denominator += tmp;
+  
+  tmp = cross_2d(rel_coll_point_1, coll_normal);
+  tmp *= tmp;
+  tmp /= phy_obj_1->get_inertia_tensor();
+  
+  denominator += tmp;
+  
+  return numerator / denominator;
+}
+
+
+
+//------------------------------------------------------------------------------
+void Collision::fetch_collision_variables(){
   // convert all points into object_space of first phy_object
   auto points_0 = phy_obj_0->get_points();
   auto points_1 = fetch_points_world_space(phy_obj_1);
-  to_object_space(points_1, phy_obj_0->get_position(), phy_obj_0->get_rotation());
+  to_object_space(points_1, ref_pos, ref_rot);
   
-  // calculate collision points (world space & object space)
-  glm::vec2 coll_point = approximate_coll_point(points_0, points_1);
+  // collision point (world & object space)
+  coll_point = approximate_coll_point(points_0, points_1);
+  rel_coll_point_0 = coll_point;
+  rel_coll_point_1 = coll_point;
+  to_object_space(rel_coll_point_0, ref_pos, ref_rot);
+  to_object_space(rel_coll_point_1, ref_pos, ref_rot);
   
-  glm::vec2 rel_coll_point_0 = coll_point;
-  to_object_space(rel_coll_point_0, phy_obj_0->get_position(), phy_obj_0->get_rotation());
-  glm::vec2 rel_coll_point_1 = coll_point;
-  to_object_space(rel_coll_point_1, phy_obj_1->get_position(), phy_obj_1->get_rotation());
+  // impact vectors
+  coll_normal = glm::normalize(coll_point - ref_pos);   // rough approximation
+  impact_velocity = calc_impact_velocity();
+}
+
+
+
+//------------------------------------------------------------------------------
+glm::vec2 Collision::calc_impact_velocity(){  
+  // linear velocity
+  glm::vec2 rel_vel_1 = phy_obj_1->get_velocity();
+  glm::vec2 rel_vel_0 = phy_obj_0->get_velocity();
+  
+  // angular velocity
+  glm::vec3 ang_vel_0 = { 0.0f, 0.0f, phy_obj_0->get_angular_velocity() };
+  glm::vec3 ang_vel_1 = { 0.0f, 0.0f, phy_obj_1->get_angular_velocity() };
+  ang_vel_0 = glm::cross( ang_vel_0, {rel_coll_point_0, 0.0f} );
+  ang_vel_1 = glm::cross( ang_vel_1, {rel_coll_point_1, 0.0f} );
+  
+  // result
+  rel_vel_0 += glm::vec2( ang_vel_0.x, ang_vel_0.y );
+  rel_vel_1 += glm::vec2( ang_vel_1.x, ang_vel_1.y );
+  return rel_vel_0 - rel_vel_1;
 }
 
 
@@ -184,13 +246,13 @@ void Collision::calc_impulse(){
 glm::vec2 Collision::approximate_coll_point(const std::vector< glm::vec2 >& points_0, const std::vector< glm::vec2 >& points_1){
   glm::vec2 center_0 = {0.0f, 0.0f};
   glm::vec2 center_1 = phy_obj_1->get_position();
-  to_object_space(center_1, phy_obj_0->get_position(), phy_obj_0->get_rotation());
+  to_object_space(center_1, ref_pos, ref_rot);
   
   auto approx_p0 = approx_rel_coll_point(points_0, center_1);
   auto approx_p1 = approx_rel_coll_point(points_1, center_0);
   
-  to_world_space(approx_p0, phy_obj_0->get_position(), phy_obj_0->get_rotation());
-  to_world_space(approx_p1, phy_obj_0->get_position(), phy_obj_0->get_rotation());
+  to_world_space(approx_p0, ref_pos, ref_rot);
+  to_world_space(approx_p1, ref_pos, ref_rot);
   
   // result
   glm::vec2 result = (approx_p0 + approx_p1) * 0.5f;
@@ -255,10 +317,8 @@ glm::vec2 Collision::refine_nearest_point(glm::vec2 curr_point, glm::vec2 neighb
 //------------------------------------------------------------------------------
 std::vector< glm::vec2 > Collision::fetch_points_world_space(std::shared_ptr< PhyObject > phy_obj){
   auto points = phy_obj->get_points();
-  glm::vec2 offset = phy_obj->get_position();
-  float rotation = phy_obj->get_rotation();
+  to_world_space(points, ref_pos, ref_rot);
   
-  to_world_space(points, offset, rotation);
   return points;
 }
 
@@ -365,6 +425,13 @@ void Collision::to_object_space(glm::vec2& point, glm::vec2 offset, float rotati
   float y = -(point.x * sine) + point.y * cosine;
   point.x = x;
   point.y = y;
+}
+
+
+
+//------------------------------------------------------------------------------
+float Collision::cross_2d(glm::vec2 v_0, glm::vec2 v_1){
+  return v_0.x * v_1.y - v_0.y - v_1.x;
 }
 
 
