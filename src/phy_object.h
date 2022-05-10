@@ -83,7 +83,7 @@ protected:
   float torque = 0.0f;
   float step_time = 1.0f / 100.0f;   // duration of tick in seconds
   float mass = 0.1f;
-  float adjustment_const = 100.0f;   // adjust this until simulation looks good
+  float adjustment_const = 1.0f;   // adjust this until simulation looks good
   float bounciness = 0.5f;   // keep between 0 and 1 !
   glm::vec2 velocity = {0.0f, 0.0f};
   

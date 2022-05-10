@@ -67,10 +67,6 @@ bool Collision::has_contact(){  return contact;  }
 void Collision::handle(){
   if( ! contact) return;   // skip if there is no contact
 
-  std::cout << "!" << std::flush;
-
-  ref_pos = phy_obj_0->get_position();
-  ref_rot = phy_obj_0->get_rotation();
   apply_impulse();
 }
 
@@ -161,7 +157,11 @@ glm::vec2 Collision::perpendicular(glm::vec2 vec){
 
 //------------------------------------------------------------------------------
 void Collision::apply_impulse(){
+  ref_pos = phy_obj_0->get_position();
+  ref_rot = phy_obj_0->get_rotation();
+  
   float impulse = calc_impulse();
+  
   phy_obj_0->apply_impulse(impulse, rel_coll_point_0, coll_normal);
   phy_obj_1->apply_impulse( - impulse, rel_coll_point_1, coll_normal);
 }

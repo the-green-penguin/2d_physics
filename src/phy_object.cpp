@@ -144,8 +144,6 @@ void PhyObject::apply_impulse(float impulse, glm::vec2 rel_coll_point, glm::vec2
   
   // angular velocity
   angular_velocity += cross_2d(rel_coll_point, impulse * coll_normal)  * (1.0f / inertia_tensor);
-  
-  std::cout << impulse << "\n";
 }
 
 
@@ -198,7 +196,7 @@ void PhyObject::update_rotation(){
 
 //------------------------------------------------------------------------------
 void PhyObject::update_position(){
-  
+  set_position(position + step_time * velocity);   // update phy & graphics
 }
 
 
