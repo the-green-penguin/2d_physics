@@ -67,11 +67,11 @@ bool Collision::has_contact(){  return contact;  }
 void Collision::handle(){
   if( ! contact) return;   // skip if there is no contact
 
-  std::cout << "!!!\n";
+  std::cout << "!" << std::flush;
 
-  ///ref_pos = phy_obj_0->get_position();
-  ///ref_rot = phy_obj_0->get_rotation();
-  ///apply_impulse();
+  ref_pos = phy_obj_0->get_position();
+  ref_rot = phy_obj_0->get_rotation();
+  apply_impulse();
 }
 
 
@@ -83,7 +83,7 @@ void Collision::handle(){
 bool Collision::check_contact(){  
   // approximate (big distance -> no collision)
   float max_distance = phy_obj_0->get_size() + phy_obj_1->get_size();
-  float distance = glm::distance(phy_obj_0->get_position(), phy_obj_0->get_position());
+  float distance = glm::distance(phy_obj_0->get_position(), phy_obj_1->get_position());
   
   if(distance > max_distance)
     return false;
@@ -163,7 +163,7 @@ glm::vec2 Collision::perpendicular(glm::vec2 vec){
 void Collision::apply_impulse(){
   float impulse = calc_impulse();
   phy_obj_0->apply_impulse(impulse, rel_coll_point_0, coll_normal);
-  phy_obj_0->apply_impulse( - impulse, rel_coll_point_1, coll_normal);
+  phy_obj_1->apply_impulse( - impulse, rel_coll_point_1, coll_normal);
 }
 
 
@@ -171,7 +171,7 @@ void Collision::apply_impulse(){
 //------------------------------------------------------------------------------
 float Collision::calc_impulse(){
   fetch_collision_variables();
-  float bounciness = ( phy_obj_0->get_bounciness() + phy_obj_0->get_bounciness() ) / 2;
+  float bounciness = ( phy_obj_0->get_bounciness() + phy_obj_1->get_bounciness() ) / 2;
   
   // formular:
   //                                - ( 1 + c ) * dot(v_rel, n)
@@ -317,7 +317,10 @@ glm::vec2 Collision::refine_nearest_point(glm::vec2 curr_point, glm::vec2 neighb
 //------------------------------------------------------------------------------
 std::vector< glm::vec2 > Collision::fetch_points_world_space(std::shared_ptr< PhyObject > phy_obj){
   auto points = phy_obj->get_points();
-  to_world_space(points, ref_pos, ref_rot);
+  auto position = phy_obj->get_position();
+  auto rotation = phy_obj->get_rotation();
+  
+  to_world_space(points, position, rotation);
   
   return points;
 }
