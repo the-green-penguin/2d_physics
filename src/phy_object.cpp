@@ -166,6 +166,8 @@ void PhyObject::calc_inertia_tensor(){
   
   for(auto &p : points)
     inertia_tensor += p_mass * glm::dot(p, p);
+    
+  inertia_tensor /= adjustment_const;
 }
 
 
@@ -187,7 +189,7 @@ void PhyObject::calc_center_of_mass(){
 void PhyObject::update_rotation(){
   set_rotation(rotation + step_time * angular_velocity);   // update phy & graphics
   
-  float change = adjustment_const * (torque / inertia_tensor);
+  float change = torque / inertia_tensor;
   angular_velocity = angular_velocity + (step_time * change);
   torque = 0.0f;
 }
