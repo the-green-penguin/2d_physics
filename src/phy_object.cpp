@@ -47,7 +47,10 @@ PhyObject::PhyObject(glm::vec2 position, float rotation, float size, glm::vec3 c
 
 
 //------------------------------------------------------------------------------
-PhyObject::~PhyObject(){}
+PhyObject::~PhyObject(){
+  if( ! Window::got_closed(window_id))
+    Window::remove_gobject(window_id, gobj_id);
+}
 
 
 

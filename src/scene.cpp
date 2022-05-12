@@ -31,8 +31,6 @@ SOFTWARE.
 #include <chrono>
 using namespace std::chrono;
 
-#include "collision.h"
-
 
 
 Scene::Scene(){
@@ -186,6 +184,8 @@ void Scene::check_activate_objects(){
 void Scene::update_objects(){
   // collisions
   handle_collisions();
+  if(collisions.size() > 1000)
+    collisions.clear();
   
   // update individual objects
   for(auto &o : phy_objects)
@@ -198,8 +198,9 @@ void Scene::update_objects(){
 void Scene::handle_collisions(){
   for(std::size_t i = 0; i < phy_objects.size(); i++){
     for(std::size_t j = i + 1; j < phy_objects.size(); j++){
-      Collision col(phy_objects[i], phy_objects[j]);
-      col.handle();
+      std::shared_ptr<Collision> col = std::make_shared<Collision>(phy_objects[i], phy_objects[j], window_id);
+      col->handle();
+      collisions.push_back(col);
     }
   }
 }

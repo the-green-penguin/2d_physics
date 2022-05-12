@@ -35,6 +35,7 @@ SOFTWARE.
 
 #include "../simple_2d_graphics/src/window.h"
 #include "phy_object.h"
+#include "collision.h"
 
 
 
@@ -68,6 +69,7 @@ private:
   std::vector< std::shared_ptr<PhyObject> > phy_objects;
   id window_id;
   uint ticks_passed = 0;
+  std::vector< std::shared_ptr< Collision > > collisions;
   
   // this mess is a priority_queue with phy_objects to be activated next on top
   static bool compare_time(std::shared_ptr< PhyObject > phy_0, std::shared_ptr< PhyObject > phy_1){

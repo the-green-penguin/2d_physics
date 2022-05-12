@@ -52,7 +52,7 @@ Collision::Collision(std::shared_ptr< PhyObject > phy_obj_0, std::shared_ptr< Ph
 
 //------------------------------------------------------------------------------
 Collision::~Collision(){
-  if(visible)
+  if(visible && ! Window::got_closed(window_id))
     Window::remove_gobject(window_id, collision_marker);
 }
 
