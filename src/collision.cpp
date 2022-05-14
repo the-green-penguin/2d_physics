@@ -31,21 +31,19 @@ SOFTWARE.
 
 
 
-Collision::Collision(std::shared_ptr< PhyObject > phy_obj_0, std::shared_ptr< PhyObject > phy_obj_1){
-  this->phy_obj_0 = phy_obj_0;
-  this->phy_obj_1 = phy_obj_1;
-  this->window_id = window_id;
-  contact = check_contact();
-}
+Collision::Collision(std::shared_ptr< PhyObject > phy_obj_0, std::shared_ptr< PhyObject > phy_obj_1)
+  : Collision(phy_obj_0, phy_obj_1, std::numeric_limits<id>::max()){}
 
 
 
 //------------------------------------------------------------------------------
-Collision::Collision(std::shared_ptr< PhyObject > phy_obj_0, std::shared_ptr< PhyObject > phy_obj_1, id window_id)
-  : Collision(phy_obj_0, phy_obj_1){
-  
+Collision::Collision(std::shared_ptr< PhyObject > phy_obj_0, std::shared_ptr< PhyObject > phy_obj_1, id window_id){
+  this->phy_obj_0 = phy_obj_0;
+  this->phy_obj_1 = phy_obj_1;
   this->window_id = window_id;
+  
   this->visible = true;
+  contact = check_contact();
 }
 
 
