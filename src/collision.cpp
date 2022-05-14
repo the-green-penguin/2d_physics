@@ -117,12 +117,12 @@ Collision::projection Collision::project_polygon(glm::vec2 axis, std::vector< gl
   if(polygon.size() < 1)
     throw std::runtime_error("Collision detection: Cannot check polygon with zero points.");
   
-  float min = std::numeric_limits<float>::max();
-  float max = std::numeric_limits<float>::min();
+  float min, max;
+  min = max = glm::dot(axis, polygon[0]);
   
   // project point onto axis and compare to prev min/max
-  for(auto &p : polygon){
-    float proj = glm::dot(axis, p);
+  for(std::size_t i = 1; i < polygon.size(); i++){
+    float proj = glm::dot(axis, polygon[i]);
     
     if(proj < min)
       min = proj;
