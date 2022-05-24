@@ -30,7 +30,7 @@ SOFTWARE.
 #include <string>
 #include <memory>
 
-#include <glm/glm.hpp>   // sudo apt install libglm-dev
+#include <glm/glm.hpp>
 
 #include "../simple_2d_graphics/src/window.h"
 #include "../simple_2d_graphics/src/graphics_object.h"

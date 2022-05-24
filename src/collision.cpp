@@ -211,7 +211,7 @@ void Collision::fetch_collision_variables(){
   rel_coll_point_0 = coll_point;
   rel_coll_point_1 = coll_point;
   to_object_space(rel_coll_point_0, ref_pos, ref_rot);
-  to_object_space(rel_coll_point_1, ref_pos, ref_rot);
+  to_object_space(rel_coll_point_1, phy_obj_1->get_position(), phy_obj_1->get_rotation());
   
   // impact vectors
   coll_normal = glm::normalize(coll_point - ref_pos);   // rough approximation

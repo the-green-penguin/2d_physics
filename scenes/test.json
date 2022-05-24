@@ -16,7 +16,7 @@
         
       "rectangle":
         {
-          "position": [75.0f, 170.0f],
+          "position": [75.0f, 155.0f],
           "rotation": 0.0f,
           "size": 50.0f,
           "color": [0.0f, 1.0f, 0.0f],

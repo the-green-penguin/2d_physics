@@ -28,7 +28,7 @@ SOFTWARE.
 
 #include <memory>
 
-#include <glm/glm.hpp>   // sudo apt install libglm-dev
+#include <glm/glm.hpp>
 
 #include "phy_object.h"
 
