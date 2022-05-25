@@ -59,6 +59,7 @@ rm-exe:
 
 # link object files -> executable
 $(EXE): $(OBJ)
+	mkdir bin -p
 	$(CC) $(OBJ) -o $@ $(FLAGS)
 
 # create object files
